@@ -1,0 +1,145 @@
+/* ===========================================
+   TÜTÜN KONTROL ASİSTANI - GLOBAL STYLES
+   =========================================== */
+
+/* --- FONT SCALING SYSTEM --- */
+:root {
+    --font-scale: 1;
+    --base-size: 16px;
+}
+
+/* Font Size Classes */
+html.font-small {
+    --font-scale: 0.875;
+    --base-size: 14px;
+}
+
+html.font-normal {
+    --font-scale: 1;
+    --base-size: 16px;
+}
+
+html.font-large {
+    --font-scale: 1.125;
+    --base-size: 18px;
+}
+
+/* Apply base font size */
+html {
+    font-size: var(--base-size);
+}
+
+body {
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+/* --- ACCESSIBILITY IMPROVEMENTS --- */
+
+/* Better focus indicators */
+*:focus-visible {
+    outline: 3px solid #0d9488;
+    outline-offset: 2px;
+}
+
+/* Larger touch targets for buttons */
+button, 
+[role="button"],
+.btn {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Better text contrast */
+.text-slate-500 {
+    color: #475569 !important;
+}
+
+.text-slate-600 {
+    color: #334155 !important;
+}
+
+.text-gray-500 {
+    color: #4b5563 !important;
+}
+
+/* --- IMPROVED SPACING --- */
+
+/* Increase line height for better readability */
+p, li, span {
+    line-height: 1.7;
+}
+
+/* More padding in cards */
+.rounded-xl, .rounded-2xl, .rounded-lg {
+    padding: calc(var(--font-scale) * 1rem);
+}
+
+/* --- HEADER IMPROVEMENTS --- */
+header {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* --- FONT SIZE SELECTOR STYLES --- */
+.font-size-selector {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.font-size-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.font-size-btn:hover {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.font-size-btn.active {
+    background: #0d9488;
+    color: white;
+    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.3);
+}
+
+/* --- ANIMATION --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 768px) {
+    html.font-large {
+        --base-size: 17px;
+    }
+}
+
+/* --- PRINT STYLES --- */
+@media print {
+    header, .font-size-selector {
+        display: none;
+    }
+    
+    body {
+        font-size: 12pt;
+    }
+}
