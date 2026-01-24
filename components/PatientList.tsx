@@ -134,6 +134,25 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
                             onChange={e => setCurrentPatientData({ ...currentPatientData, phone: e.target.value })} />
                     </div>
 
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                        <h3 className="font-semibold mb-3 text-blue-900">Sigara Kullanım Bilgisi</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700">Günlük Sigara Sayısı</label>
+                                <input required type="number" min="1" max="100" className="w-full p-2 border rounded mt-1"
+                                    value={currentPatientData.dailyAmount || ''}
+                                    onChange={e => setCurrentPatientData({ ...currentPatientData, dailyAmount: Number(e.target.value) })} />
+                                <span className="text-xs text-gray-500">adet / gün</span>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700">Sigaraya Başlama Yaşı</label>
+                                <input required type="number" min="5" max="80" className="w-full p-2 border rounded mt-1"
+                                    value={currentPatientData.firstSmokingAge || ''}
+                                    onChange={e => setCurrentPatientData({ ...currentPatientData, firstSmokingAge: Number(e.target.value) })} />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="bg-red-50 p-4 rounded-lg border border-red-100">
                         <h3 className="font-semibold mb-2 text-red-900">Ek Hastalıklar / Durumlar</h3>
                         <p className="text-xs text-red-700 mb-3">Tedavi önerisi için lütfen uygun olanları işaretleyiniz.</p>

@@ -10,6 +10,7 @@ interface PsychosocialDashboardProps {
     onSwitchToIntervention?: () => void;
     onUpdateProfile: () => void;
     onBack: () => void;
+    onUpdatePatient: (patient: Patient) => void;
 }
 
 export const PsychosocialDashboard: React.FC<PsychosocialDashboardProps> = ({
@@ -18,7 +19,8 @@ export const PsychosocialDashboard: React.FC<PsychosocialDashboardProps> = ({
     onStartFollowUp,
     onSwitchToIntervention,
     onUpdateProfile,
-    onBack
+    onBack,
+    onUpdatePatient
 }) => {
     const [showCBTTools, setShowCBTTools] = React.useState(false);
 
@@ -56,6 +58,19 @@ export const PsychosocialDashboard: React.FC<PsychosocialDashboardProps> = ({
                             </h3>
                             <p className="text-slate-700 italic">{status.homework || "Henüz ödev verilmedi."}</p>
                         </div>
+                        {patient.activeTreatment?.isActive && (
+                            <div className="bg-teal-50 p-5 rounded-xl border border-teal-100">
+                                <h3 className="text-sm font-bold text-teal-800 uppercase mb-3 flex items-center">
+                                    <span className="mr-2">💊</span> Aktif İlaç Tedavisi
+                                </h3>
+                                <div className="flex justify-between items-center">
+                                    <p className="text-lg font-medium text-teal-900">
+                                        {patient.activeTreatment.commercialName || patient.activeTreatment.drugName}
+                                    </p>
+                                    <span className="text-xs text-teal-600">Başlangıç: {patient.activeTreatment.startDate}</span>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-4">
@@ -107,7 +122,7 @@ export const PsychosocialDashboard: React.FC<PsychosocialDashboardProps> = ({
 
             {/* CBT Tools Panel */}
             {showCBTTools && (
-                <CBTTools patient={patient} onClose={() => setShowCBTTools(false)} />
+                <CBTTools patient={patient} onClose={() => setShowCBTTools(false)} onUpdatePatient={onUpdatePatient} />
             )}
         </div>
     );

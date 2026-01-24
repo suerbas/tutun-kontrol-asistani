@@ -6,6 +6,7 @@ import { PsychosocialSetup, PsychosocialDashboard, PsychosocialInterview, Finish
 interface PsychosocialProps {
     patient: Patient;
     onBack: () => void;
+    onUpdatePatient: (patient: Patient) => void;
     onSwitchToIntervention?: () => void;
 }
 
@@ -20,7 +21,7 @@ interface SessionState {
     selectedScore?: number;
 }
 
-export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBack, onSwitchToIntervention }) => {
+export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBack, onUpdatePatient, onSwitchToIntervention }) => {
     // Determine initial profile based on comorbidities and age
     const getInitialProfile = (): SpecialProfile => {
         if (patient.psychosocialStatus?.profile) return patient.psychosocialStatus.profile;
@@ -210,12 +211,28 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
             if (stepId.includes('CBT_SOLUTION_SOCIAL')) pastTriggers.add('Sosyal Ortam');
         });
 
-        const clinicalMemorySection = `
-        --- KLİNİK HAFIZA & ÖZET ---
-        📌 Tespit Edilen Tetikleyiciler: ${pastTriggers.size > 0 ? Array.from(pastTriggers).join(', ') : 'Henüz netleşmedi'}
-        📌 Geçmiş Baş Etme Denemeleri: ${pastHomeworks.length > 0 ? pastHomeworks.slice(-3).join(' -> ') : 'İlk deneme'}
-        📌 İlerleme Durumu: ${patient.psychosocialStatus?.lastStage ? `${patient.psychosocialStatus.lastStage} -> ` : ''}${stage || 'Belirsiz'}
-        `;
+        // Evre Türkçeye çevir
+        const stageTr = stage === 'Resistance' ? 'Direnç' : stage === 'Ambivalence' ? 'İkilem' : stage === 'Action' ? 'Eylem' : 'Belirsiz';
+        const prevStageTr = patient.psychosocialStatus?.lastStage === 'Resistance' ? 'Direnç' :
+            patient.psychosocialStatus?.lastStage === 'Ambivalence' ? 'İkilem' :
+                patient.psychosocialStatus?.lastStage === 'Action' ? 'Eylem' : null;
+
+        // Özet not oluştur (tek satır, okunabilir format)
+        const triggersText = pastTriggers.size > 0 ? Array.from(pastTriggers).join(', ') : '';
+        const progressText = prevStageTr ? `${prevStageTr} → ${stageTr}` : stageTr;
+
+        // Ana notları birleştir
+        const mainNotes = sessionState.notes.length > 0
+            ? sessionState.notes.join(' | ')
+            : 'Rutin motivasyonel görüşme yapıldı.';
+
+        // Kısa ve öz visit notu
+        let visitNote = `Seans #${(patient.psychosocialStatus?.sessionCount || 0) + 1}`;
+        visitNote += ` | Evre: ${progressText}`;
+        if (currentScore !== null) visitNote += ` | Skor: ${currentScore}/10`;
+        visitNote += ` | ${mainNotes}`;
+        if (triggersText) visitNote += ` | Tetikleyiciler: ${triggersText}`;
+        if (finalHomework && finalHomework !== 'Yok') visitNote += ` | Ödev: ${finalHomework}`;
 
         const newPsychosocialStatus: PsychosocialStatus = {
             profile: sessionState.profile,
@@ -227,23 +244,8 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
             isQuitting: false
         };
 
-        const visitNote = `
-            MOTİVASYONEL GÖRÜŞME RAPORU (#${newPsychosocialStatus.sessionCount})
-            ================================
-            Profil: ${sessionState.profile}
-            Ana Motivasyon: ${sessionState.motivation}
-            Hazır Oluş Skoru: ${currentScore ?? 'Belirtilmedi'}
-            Tahmini Evre: ${stage === 'Resistance' ? 'Direnç' : stage === 'Ambivalence' ? 'İkilem' : stage === 'Action' ? 'Eylem' : 'Belirsiz'}
-            
-            Görüşme Akışı & Notlar:
-            ${sessionState.notes.length > 0 ? sessionState.notes.map(n => `- ${n}`).join('\n') : '- Standart motivasyonel görüşme protokolü uygulandı.'}
-            
-            Verilen Ödev: ${finalHomework || 'Yok'}
-
-            ${clinicalMemorySection}
-        `;
-
         const visit: Visit = {
+
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('tr-TR'),
             status: TreatmentStatus.Active,
@@ -259,6 +261,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
         };
 
         patientService.savePatient(updatedPatient);
+        onUpdatePatient(updatedPatient);
         onBack();
     };
 
@@ -272,6 +275,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
                 onSwitchToIntervention={onSwitchToIntervention}
                 onUpdateProfile={() => setView('SETUP')}
                 onBack={onBack}
+                onUpdatePatient={onUpdatePatient}
             />
         );
     }

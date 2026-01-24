@@ -16,6 +16,7 @@ const App: React.FC = () => {
     const [currentScreen, setCurrentScreen] = useState<AppScreen>(AppScreen.Home);
     const [targetModule, setTargetModule] = useState<AppScreen | null>(null);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+    const [autoStartIntervention, setAutoStartIntervention] = useState(false);
     const [fontSize, setFontSize] = useState<FontSize>('normal');
 
     // Load font size preference from localStorage on mount
@@ -60,6 +61,10 @@ const App: React.FC = () => {
         }
     };
 
+    const handleUpdatePatient = (patient: Patient) => {
+        setSelectedPatient(patient);
+    };
+
     const renderScreen = () => {
         switch (currentScreen) {
             case AppScreen.Home:
@@ -96,12 +101,16 @@ const App: React.FC = () => {
                     <div className="p-4">
                         <InterventionModule
                             patient={selectedPatient}
+                            autoStart={autoStartIntervention}
+                            onUpdatePatient={handleUpdatePatient}
                             onBack={() => {
                                 setSelectedPatient(null);
                                 setTargetModule(null);
+                                setAutoStartIntervention(false);
                                 setCurrentScreen(AppScreen.PatientList);
                             }}
                             onSwitchToPsychosocial={() => {
+                                setAutoStartIntervention(false);
                                 setCurrentScreen(AppScreen.Psychosocial);
                             }}
                         />
@@ -114,12 +123,15 @@ const App: React.FC = () => {
                     <div className="p-4">
                         <PsychosocialModule
                             patient={selectedPatient}
+                            onUpdatePatient={handleUpdatePatient}
                             onBack={() => {
                                 setSelectedPatient(null);
                                 setTargetModule(null);
+                                setAutoStartIntervention(false);
                                 setCurrentScreen(AppScreen.PatientList);
                             }}
                             onSwitchToIntervention={() => {
+                                setAutoStartIntervention(true);
                                 setTargetModule(AppScreen.Intervention);
                                 setCurrentScreen(AppScreen.Intervention);
                             }}

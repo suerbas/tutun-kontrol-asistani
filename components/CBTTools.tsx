@@ -7,9 +7,10 @@ import { patientService } from '../services/patientService';
 interface CBTToolsProps {
     patient: Patient;
     onClose: () => void;
+    onUpdatePatient: (patient: Patient) => void;
 }
 
-export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose }) => {
+export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePatient }) => {
     const [activeTab, setActiveTab] = useState<'distortions' | 'thought-record' | 'records'>('distortions');
     const [showForm, setShowForm] = useState(false);
     const [thoughtRecordForm, setThoughtRecordForm] = useState({
@@ -45,6 +46,7 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose }) => {
         };
 
         patientService.savePatient(updatedPatient);
+        onUpdatePatient(updatedPatient);
         setShowForm(false);
         setThoughtRecordForm({
             trigger: '',
@@ -86,8 +88,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose }) => {
                     <button
                         onClick={() => setActiveTab('distortions')}
                         className={`flex-1 py-3 px-4 font-medium text-sm transition-all ${activeTab === 'distortions'
-                                ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white'
-                                : 'text-gray-500 hover:text-gray-700'
+                            ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white'
+                            : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         📚 Bilişsel Çarpıtmalar
@@ -95,8 +97,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose }) => {
                     <button
                         onClick={() => setActiveTab('thought-record')}
                         className={`flex-1 py-3 px-4 font-medium text-sm transition-all ${activeTab === 'thought-record'
-                                ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white'
-                                : 'text-gray-500 hover:text-gray-700'
+                            ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white'
+                            : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         ✏️ Düşünce Kaydı
@@ -104,8 +106,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose }) => {
                     <button
                         onClick={() => setActiveTab('records')}
                         className={`flex-1 py-3 px-4 font-medium text-sm transition-all ${activeTab === 'records'
-                                ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white'
-                                : 'text-gray-500 hover:text-gray-700'
+                            ? 'text-indigo-600 border-b-2 border-indigo-600 bg-white'
+                            : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         📋 Kayıtlar ({existingRecords.length})

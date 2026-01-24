@@ -81,6 +81,15 @@ export interface PsychosocialStatus {
     thoughtRecords?: ThoughtRecord[];  // BDT Düşünce Kayıtları
 }
 
+// Aktif ilaç tedavisi bilgisi
+export interface ActiveTreatment {
+    drugName: string;           // İlaç adı (ör: "Vareniklin")
+    commercialName?: string;    // Ticari ad (ör: "Champix")
+    startDate: string;          // Başlangıç tarihi
+    dosage?: string;            // Doz bilgisi
+    isActive: boolean;          // Tedavi devam ediyor mu?
+}
+
 export interface Visit {
     id: string;
     date: string;
@@ -106,6 +115,7 @@ export interface Patient {
     visits: Visit[];
     createdAt: string;
     psychosocialStatus?: PsychosocialStatus;
+    activeTreatment?: ActiveTreatment;  // Aktif ilaç tedavisi
 }
 
 export enum AppScreen {
