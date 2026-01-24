@@ -57,6 +57,19 @@ export interface DrugInfo {
     notes: string;
 }
 
+// --- BDT DÜŞÜNCE KAYDI (THOUGHT RECORD) ---
+export interface ThoughtRecord {
+    id: string;
+    date: string;
+    trigger: string;           // Tetikleyici durum
+    automaticThought: string;  // Otomatik düşünce
+    emotion: string;           // Duygu (EMOTIONS listesinden id)
+    emotionIntensity: number;  // Duygu yoğunluğu (1-10)
+    cognitiveDistortion: string; // Bilişsel çarpıtma (COGNITIVE_DISTORTIONS listesinden id)
+    alternativeThought: string;  // Alternatif/Dengeli düşünce
+    newEmotionIntensity?: number; // Yeni duygu yoğunluğu (1-10)
+}
+
 export interface PsychosocialStatus {
     profile: SpecialProfile;
     motivation: string;
@@ -65,6 +78,7 @@ export interface PsychosocialStatus {
     homework?: string;
     sessionCount: number;
     isQuitting: boolean;
+    thoughtRecords?: ThoughtRecord[];  // BDT Düşünce Kayıtları
 }
 
 export interface Visit {

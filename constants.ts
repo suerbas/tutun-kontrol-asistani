@@ -2,56 +2,128 @@
 
 import { DrugInfo, COMORBIDITIES, SpecialProfile } from './types';
 
+// --- BİLİŞSEL ÇARPITMALAR (COGNITIVE DISTORTIONS) ---
+export const COGNITIVE_DISTORTIONS = [
+    {
+        id: 'all_or_nothing',
+        name: 'Ya Hep Ya Hiç Düşüncesi',
+        description: 'Her şeyi siyah-beyaz olarak görme. Ara tonları kabul etmeme.',
+        smokingExample: '"Bir tane içersem battı, artık tamamen başarısızım."',
+        challenge: 'Bir kayma (slip) nüks (relaps) değildir. Yolculuğa devam edebilirsin.'
+    },
+    {
+        id: 'catastrophizing',
+        name: 'Felaketleştirme',
+        description: 'Her zaman en kötü senaryoyu öngörme.',
+        smokingExample: '"Bırakırsam kesin çıldırırım, işimi kaybederim."',
+        challenge: 'Yoksunluk belirtileri geçicidir (1-2 hafta). Çoğu kişi normal hayatına devam eder.'
+    },
+    {
+        id: 'mind_reading',
+        name: 'Zihin Okuma',
+        description: 'Başkalarının ne düşündüğünü bildiğini sanma.',
+        smokingExample: '"Herkes benim sigarasız ne kadar sinirli olduğumu görüyor."',
+        challenge: 'Gerçekten sordun mu? Çoğu insan senin kadar dikkat etmiyor.'
+    },
+    {
+        id: 'labeling',
+        name: 'Etiketleme',
+        description: 'Kendine veya başkalarına olumsuz sıfat takma.',
+        smokingExample: '"Ben iradesiz biriyim, bırakmak benim harcım değil."',
+        challenge: 'Bağımlılık irade eksikliği değil, beyin kimyasıdır. Tedavi ile yönetilebilir.'
+    },
+    {
+        id: 'discounting',
+        name: 'Olumluyu Küçümseme',
+        description: 'Başarıları görmezden gelme veya önemsizleştirme.',
+        smokingExample: '"3 gün dayandım ama o zaten kolaydı, asıl zor olan..."',
+        challenge: 'Her gün bir zaferdir. Küçük adımlar büyük değişimlere yol açar.'
+    },
+    {
+        id: 'emotional_reasoning',
+        name: 'Duygusal Akıl Yürütme',
+        description: 'Hisleri gerçekmiş gibi kabul etme.',
+        smokingExample: '"Sigara içmek istiyorum, demek ki gerçekten ihtiyacım var."',
+        challenge: 'İstek duygusu geçicidir. 3-5 dakika bekle, azalacaktır.'
+    },
+    {
+        id: 'fortune_telling',
+        name: 'Falcılık',
+        description: 'Geleceği olumsuz olarak tahmin etme.',
+        smokingExample: '"Daha önce denedim olmadı, bu sefer de olmayacak."',
+        challenge: 'Her deneme farklıdır. Bu sefer farklı araçların ve desteğin var.'
+    },
+    {
+        id: 'should_statements',
+        name: 'Zorunluluk Cümleleri',
+        description: '"Yapmalıyım, etmeliyim" ile kendine baskı yapma.',
+        smokingExample: '"Artık bırakmış olmalıydım, bu yaştan sonra ayıp."',
+        challenge: '"Yapmalıyım" yerine "yapmak istiyorum" de. Değişim hazır olduğunda gelir.'
+    }
+];
+
+// --- DUYGULAR LİSTESİ (BDT Düşünce Kaydı için) ---
+export const EMOTIONS = [
+    { id: 'anxiety', name: 'Kaygı / Endişe', icon: '😰' },
+    { id: 'anger', name: 'Öfke / Sinir', icon: '😠' },
+    { id: 'sadness', name: 'Üzüntü / Hüzün', icon: '😢' },
+    { id: 'stress', name: 'Stres / Gerginlik', icon: '😤' },
+    { id: 'boredom', name: 'Sıkıntı / Can Sıkıntısı', icon: '😑' },
+    { id: 'loneliness', name: 'Yalnızlık', icon: '😔' },
+    { id: 'frustration', name: 'Hayal Kırıklığı', icon: '😩' },
+    { id: 'craving', name: 'Şiddetli İstek', icon: '🔥' }
+];
+
 // --- MOTİVASYON KATEGORİLERİ (YENİ) ---
 export const MOTIVATION_CATEGORIES = [
-    { 
-        id: 'health', 
-        label: 'Kişisel Sağlık', 
-        icon: '❤️', 
+    {
+        id: 'health',
+        label: 'Kişisel Sağlık',
+        icon: '❤️',
         description: 'Mevcut hastalıklar veya gelecek endişesi.',
-        examples: ['Nefes Darlığı / KOAH', 'Kanser Korkusu', 'Kalp Krizi Riski', 'Daha Zinde Hissetmek', 'Öksürükten Kurtulmak'] 
+        examples: ['Nefes Darlığı / KOAH', 'Kanser Korkusu', 'Kalp Krizi Riski', 'Daha Zinde Hissetmek', 'Öksürükten Kurtulmak']
     },
-    { 
-        id: 'family', 
-        label: 'Aile ve Sevdiklerim', 
-        icon: '👨‍👩‍👧‍👦', 
+    {
+        id: 'family',
+        label: 'Aile ve Sevdiklerim',
+        icon: '👨‍👩‍👧‍👦',
         description: 'Başkaları için veya örnek olma isteği.',
-        examples: ['Çocuklarım İçin', 'Torunum İçin', 'Eşimin İsteği', 'Pasif İçicilikten Koruma', 'İyi Örnek Olmak'] 
+        examples: ['Çocuklarım İçin', 'Torunum İçin', 'Eşimin İsteği', 'Pasif İçicilikten Koruma', 'İyi Örnek Olmak']
     },
-    { 
-        id: 'money', 
-        label: 'Maddiyat / Ekonomi', 
-        icon: '💰', 
+    {
+        id: 'money',
+        label: 'Maddiyat / Ekonomi',
+        icon: '💰',
         description: 'Sigara maliyeti ve birikim hedefleri.',
-        examples: ['Sigara Çok Pahalı', 'Para Biriktirmek', 'Borçları Ödemek', 'Tatile Gitmek', 'Ekonomik Özgürlük'] 
+        examples: ['Sigara Çok Pahalı', 'Para Biriktirmek', 'Borçları Ödemek', 'Tatile Gitmek', 'Ekonomik Özgürlük']
     },
-    { 
-        id: 'aesthetic', 
-        label: 'Görünüm ve Koku', 
-        icon: '✨', 
+    {
+        id: 'aesthetic',
+        label: 'Görünüm ve Koku',
+        icon: '✨',
         description: 'Kişisel bakım ve estetik kaygılar.',
-        examples: ['Kötü Koku', 'Diş Sararması', 'Cilt Yaşlanması', 'Daha Genç Görünmek', 'Kıyafetlerin Kokması'] 
+        examples: ['Kötü Koku', 'Diş Sararması', 'Cilt Yaşlanması', 'Daha Genç Görünmek', 'Kıyafetlerin Kokması']
     },
-    { 
-        id: 'freedom', 
-        label: 'Özgürlük ve İrade', 
-        icon: '🕊️', 
+    {
+        id: 'freedom',
+        label: 'Özgürlük ve İrade',
+        icon: '🕊️',
         description: 'Bağımlılıktan kurtulma arzusu.',
-        examples: ['Bağımlı Olmaktan Yoruldum', 'Kendime Kanıtlamak', 'Dini/Manevi Sebepler', 'İrademi Güçlendirmek'] 
+        examples: ['Bağımlı Olmaktan Yoruldum', 'Kendime Kanıtlamak', 'Dini/Manevi Sebepler', 'İrademi Güçlendirmek']
     },
-    { 
-        id: 'pregnancy', 
-        label: 'Gebelik / Bebek', 
-        icon: '🤰', 
+    {
+        id: 'pregnancy',
+        label: 'Gebelik / Bebek',
+        icon: '🤰',
         description: 'Anne ve bebek sağlığı.',
-        examples: ['Bebeğimin Sağlığı', 'Sağlıklı Doğum', 'Emzirme Süreci', 'Hamilelik Planı'] 
+        examples: ['Bebeğimin Sağlığı', 'Sağlıklı Doğum', 'Emzirme Süreci', 'Hamilelik Planı']
     },
-    { 
-        id: 'forced', 
-        label: 'Zorunluluk / Dış Baskı', 
-        icon: '⚠️', 
+    {
+        id: 'forced',
+        label: 'Zorunluluk / Dış Baskı',
+        icon: '⚠️',
         description: 'Kişisel istek yok. Doktor, aile veya koşullar zorluyor.',
-        examples: ['Doktorum Zorladı', 'Ailem İstiyor', 'Ameliyat İçin Mecburum', 'İş Yeri Kuralı'] 
+        examples: ['Doktorum Zorladı', 'Ailem İstiyor', 'Ameliyat İçin Mecburum', 'İş Yeri Kuralı']
     }
 ];
 
@@ -372,9 +444,9 @@ export interface ScenarioStep {
     script: string; // Hekimin okuyacağı metin. [Name] ve [Motivation] değişkenlerini içerebilir.
     tip: string;    // Klinik İpucu
     type: 'dialogue' | 'input' | 'scale' | 'cbt_select';
-    responses?: { 
-        label: string; 
-        nextStep: string; 
+    responses?: {
+        label: string;
+        nextStep: string;
         type?: 'positive' | 'negative' | 'neutral' | 'danger'; // Buton rengi için
         homework?: string; // Bu seçenek seçilirse atanacak ödev
         insight?: string; // Rapor için not
@@ -458,7 +530,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         script: "Sorun değil, hayatın koşuşturmacası içinde bazen öncelikler değişebiliyor. Bizi engelleyen şey neydi? Belki ödev size uygun değildi, ne dersiniz?",
         tip: "Suçlamayın. Engeli 'dışsallaştırın'. İşbirliği yapın.",
         responses: [
-            { label: "Unuttum / Aklıma gelmedi", nextStep: 'HOMEWORK_REJECTION_PIVOT', type: 'neutral', insight: "Ödev unutuldu, mekaniğe geçiş deneniyor." }, 
+            { label: "Unuttum / Aklıma gelmedi", nextStep: 'HOMEWORK_REJECTION_PIVOT', type: 'neutral', insight: "Ödev unutuldu, mekaniğe geçiş deneniyor." },
             { label: "Çok saçma geldi, yapmadım", nextStep: 'HOMEWORK_REJECTION_PIVOT', type: 'negative', insight: "Zihinsel ödev reddedildi, mekaniğe geçiş." }
         ]
     },
@@ -506,7 +578,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         tip: "Açık uçlu soruyla başlayın. Göz teması kurun ve yargılamadan dinleyin.",
         responses: [
             { label: "Kendi isteğiyle geldi (İstekli)", nextStep: 'SCALE_CHECK', type: 'positive', insight: "İçsel motivasyon mevcut." },
-            { label: "Doktor/Aile zoruyla geldi (Tepkili)", nextStep: 'RESISTANCE_DIRECT', type: 'negative', insight: "Dışsal baskı var, direnç yüksek." }, 
+            { label: "Doktor/Aile zoruyla geldi (Tepkili)", nextStep: 'RESISTANCE_DIRECT', type: 'negative', insight: "Dışsal baskı var, direnç yüksek." },
             { label: "Kararsız / Emin değil", nextStep: 'SCALE_CHECK', type: 'neutral', insight: "Ambivalans (İkilem) hakim." }
         ]
     },
@@ -538,7 +610,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         tip: "Hastalığın teknik detaylarına girmeyin. Günlük yaşam kısıtlılıklarına (Fonksiyonel kayıp) odaklanın.",
         responses: [
             { label: "Çok zorlanıyorum, korkuyorum", nextStep: 'SCALE_CHECK', type: 'positive', insight: "Hastalık algısı yüksek." },
-            { label: "Pek bir etkisini hissetmiyorum / İdare ediyorum", nextStep: 'COPD_DENIAL', type: 'neutral', insight: "İnkar / Düşük farkındalık." }, 
+            { label: "Pek bir etkisini hissetmiyorum / İdare ediyorum", nextStep: 'COPD_DENIAL', type: 'neutral', insight: "İnkar / Düşük farkındalık." },
             { label: "Artık çok geç, iş işten geçti", nextStep: 'COPD_DESPAIR', type: 'negative', insight: "Öğrenilmiş çaresizlik." }
         ]
     },
@@ -550,7 +622,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         tip: "Hasta inkar ediyor olabilir. Genel 'iyiyim' cevabı yerine spesifik bir eylem (yokuş, merdiven) sorarak farkındalık yaratın.",
         responses: [
             { label: "Evet, aslında biraz tıkanıyorum", nextStep: 'AMBIVALENCE_ENTRY', type: 'positive', insight: "Farkındalık başladı." },
-            { label: "Hayır, hiçbir fark yok", nextStep: 'HOMEWORK_OBSERVE', type: 'negative', insight: "Tam inkar (Gözlem ödevine çıkış)." } 
+            { label: "Hayır, hiçbir fark yok", nextStep: 'HOMEWORK_OBSERVE', type: 'negative', insight: "Tam inkar (Gözlem ödevine çıkış)." }
         ]
     },
 
@@ -692,9 +764,9 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         tip: "Önce sigaranın 'faydalarını' sormak hastayı şaşırtır ve savunmasını düşürür. Sonra zararlara geçin.",
         responses: [
             { label: "Rahatlatıyor / Keyif veriyor", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Haz odaklı kullanım." },
-            { label: "Stresimi azaltıyor / Sakinleştiriyor", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Stres baş etme aracı." }, 
-            { label: "Dikkatimi topluyor / Odaklanıyorum", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Bilişsel performans inancı." }, 
-            { label: "Sosyalleşiyorum / Ortamım böyle", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Sosyal aidiyet aracı." } 
+            { label: "Stresimi azaltıyor / Sakinleştiriyor", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Stres baş etme aracı." },
+            { label: "Dikkatimi topluyor / Odaklanıyorum", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Bilişsel performans inancı." },
+            { label: "Sosyalleşiyorum / Ortamım böyle", nextStep: 'AMBIVALENCE_CONS', type: 'neutral', insight: "Sosyal aidiyet aracı." }
         ]
     },
     'AMBIVALENCE_CONS': {
@@ -704,7 +776,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         tip: "Hastanın kendi ağzından 'değişim konuşmaları' (Change Talk) yapmasını sağlayın.",
         responses: [
             { label: "Nefesim daralıyor / Param gidiyor", nextStep: 'ACTION_PLAN_SMALL', type: 'positive' },
-            { label: "Pek bir zararı yok aslında", nextStep: 'HOMEWORK_OBSERVE', type: 'negative', insight: "Risk algısı düşük, gözlem ödevine çıkış." } 
+            { label: "Pek bir zararı yok aslında", nextStep: 'HOMEWORK_OBSERVE', type: 'negative', insight: "Risk algısı düşük, gözlem ödevine çıkış." }
         ]
     },
 
@@ -726,12 +798,12 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         script: "Hangi anlarda sigara yakma isteğiniz kontrol edilemez hale geliyor? (Aşağıdan seçiniz)",
         tip: "Hastanın en zayıf anını bulup ona özel 'Reçete' (Alternatif davranış) sunun.",
         responses: [
-             { label: "😡 Stres / Sinirlilik Anında", nextStep: 'CBT_SOLUTION_STRESS', type: 'danger' },
-             { label: "☕ Çay / Kahve Keyfinde", nextStep: 'CBT_SOLUTION_COFFEE', type: 'neutral' },
-             { label: "🍽️ Yemekten Hemen Sonra", nextStep: 'CBT_SOLUTION_MEAL', type: 'neutral' },
-             { label: "👯 Sosyal Ortam / Arkadaşlar", nextStep: 'CBT_SOLUTION_SOCIAL', type: 'danger' },
-             { label: "🥱 Can Sıkıntısı / Beklerken", nextStep: 'CBT_SOLUTION_BOREDOM', type: 'neutral' },
-             { label: "🚗 Araba Kullanırken", nextStep: 'CBT_SOLUTION_DRIVE', type: 'neutral' }
+            { label: "😡 Stres / Sinirlilik Anında", nextStep: 'CBT_SOLUTION_STRESS', type: 'danger' },
+            { label: "☕ Çay / Kahve Keyfinde", nextStep: 'CBT_SOLUTION_COFFEE', type: 'neutral' },
+            { label: "🍽️ Yemekten Hemen Sonra", nextStep: 'CBT_SOLUTION_MEAL', type: 'neutral' },
+            { label: "👯 Sosyal Ortam / Arkadaşlar", nextStep: 'CBT_SOLUTION_SOCIAL', type: 'danger' },
+            { label: "🥱 Can Sıkıntısı / Beklerken", nextStep: 'CBT_SOLUTION_BOREDOM', type: 'neutral' },
+            { label: "🚗 Araba Kullanırken", nextStep: 'CBT_SOLUTION_DRIVE', type: 'neutral' }
         ] as any
     },
 

@@ -5,6 +5,7 @@ import { Patient, Visit, TreatmentStatus, SpecialProfile, AppScreen, Psychosocia
 import { PSYCHOSOCIAL_SCENARIOS, ScenarioStep, MOTIVATION_CATEGORIES } from '../constants';
 import { patientService } from '../services/patientService';
 import { Button } from './Button';
+import { CBTTools } from './CBTTools';
 
 interface PsychosocialProps {
     patient: Patient;
@@ -57,6 +58,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
     const [showFinishModal, setShowFinishModal] = useState(false);
     const [setupProfile, setSetupProfile] = useState<SpecialProfile>(initialProfile);
     const [setupMotivation, setSetupMotivation] = useState(patient.psychosocialStatus?.motivation || '');
+    const [showCBTTools, setShowCBTTools] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     // Update setup profile if patient changes or new data comes in
@@ -399,6 +401,18 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
                                 <span className="text-3xl group-hover:translate-x-2 transition-transform">💊</span>
                             </button>
 
+                            {/* BDT Araçları Butonu */}
+                            <button
+                                onClick={() => setShowCBTTools(true)}
+                                className="p-6 bg-indigo-50 border-2 border-indigo-200 text-indigo-900 rounded-2xl hover:bg-indigo-100 transition-all flex items-center justify-between group"
+                            >
+                                <div className="text-left">
+                                    <h4 className="text-xl font-bold">🧠 BDT Araçları</h4>
+                                    <p className="text-sm text-indigo-700">Düşünce kaydı, bilişsel çarpıtmalar.</p>
+                                </div>
+                                <span className="text-3xl group-hover:translate-x-2 transition-transform">→</span>
+                            </button>
+
                             <Button variant="outline" onClick={() => setView('SETUP')} className="mt-2 text-xs">
                                 Profili ve Motivasyonu Güncelle
                             </Button>
@@ -410,6 +424,11 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
                         <p className="text-xs text-gray-400">Son Güncelleme: {patient.visits[patient.visits.length - 1]?.date || 'Yok'}</p>
                     </div>
                 </div>
+
+                {/* CBT Tools Panel */}
+                {showCBTTools && (
+                    <CBTTools patient={patient} onClose={() => setShowCBTTools(false)} />
+                )}
             </div>
         );
     }
