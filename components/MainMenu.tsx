@@ -9,15 +9,9 @@ interface MainMenuProps {
 export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
     return (
         <div className="min-h-[90vh]">
-            {/* Hero Section */}
-            <div className="welcome-hero py-16 px-4 text-center relative">
+            {/* Hero Section - Floating icon removed since it's now in header */}
+            <div className="welcome-hero py-12 px-4 text-center relative">
                 <div className="max-w-4xl mx-auto relative z-10">
-                    {/* Floating Icon */}
-                    <div className="animate-float inline-block mb-6">
-                        <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center shadow-2xl border border-white/30">
-                            <span className="text-5xl">🫁</span>
-                        </div>
-                    </div>
 
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 tracking-tight animate-slideUp">
                         Tütün Kontrolü ve
@@ -33,20 +27,20 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
                     </p>
 
                     {/* Stats */}
-                    <div className="flex flex-wrap justify-center gap-6 mb-8 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-                        <div className="glass rounded-xl px-6 py-3 text-white">
+                    <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-8 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+                        <div className="glass rounded-xl px-5 py-3 text-white">
                             <div className="text-2xl font-bold">5A</div>
                             <div className="text-teal-200 text-sm">Klinik Model</div>
                         </div>
-                        <div className="glass rounded-xl px-6 py-3 text-white">
+                        <div className="glass rounded-xl px-5 py-3 text-white">
                             <div className="text-2xl font-bold">BDT</div>
                             <div className="text-teal-200 text-sm">Araçları</div>
                         </div>
-                        <div className="glass rounded-xl px-6 py-3 text-white">
+                        <div className="glass rounded-xl px-5 py-3 text-white">
                             <div className="text-2xl font-bold">MI</div>
                             <div className="text-teal-200 text-sm">Teknikleri</div>
                         </div>
-                        <div className="glass rounded-xl px-6 py-3 text-white">
+                        <div className="glass rounded-xl px-5 py-3 text-white">
                             <div className="text-2xl font-bold">8+</div>
                             <div className="text-teal-200 text-sm">İlaç Protokolü</div>
                         </div>
@@ -55,7 +49,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
             </div>
 
             {/* Cards Section */}
-            <div className="max-w-6xl mx-auto px-4 -mt-8 relative z-20 pb-12">
+            <div className="max-w-6xl mx-auto px-4 -mt-6 relative z-20 pb-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                     {/* Eğitim Modülü Kartı */}
@@ -141,9 +135,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* Footer Info */}
-                <div className="mt-12 text-center">
+                <div className="mt-12 text-center space-y-2">
                     <p className="text-slate-500 text-sm">
                         🏥 Sağlık Bakanlığı rehberleri ve güncel kanıta dayalı uygulamalar referans alınarak hazırlanmıştır.
+                    </p>
+                    <p className="text-slate-400 text-xs">
+                        💻 En iyi deneyim için bilgisayar ekranında görüntülemeniz önerilir.
                     </p>
                 </div>
             </div>

@@ -69,11 +69,11 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
     const getDistortionName = (id: string) => COGNITIVE_DISTORTIONS.find(d => d.id === id)?.name || id;
 
     const tabs = [
-        { id: 'distortions' as TabType, label: '📚 Bilişsel Çarpıtmalar', count: COGNITIVE_DISTORTIONS.length },
-        { id: 'resistance' as TabType, label: '🛡️ Direnç Rehberi', count: CBT_CLIENT_RESISTANCE.length },
-        { id: 'coping' as TabType, label: '🧘 Baş Etme', count: COPING_TECHNIQUES.length },
-        { id: 'thought-record' as TabType, label: '✏️ Düşünce Kaydı', count: null },
-        { id: 'records' as TabType, label: '📋 Kayıtlar', count: existingRecords.length }
+        { id: 'distortions' as TabType, label: '📚 Bilişsel Çarpıtmalar', shortLabel: '📚 Çarpıtmalar', count: COGNITIVE_DISTORTIONS.length },
+        { id: 'resistance' as TabType, label: '🛡️ Direnç Rehberi', shortLabel: '🛡️ Direnç', count: CBT_CLIENT_RESISTANCE.length },
+        { id: 'coping' as TabType, label: '🧘 Baş Etme', shortLabel: '🧘 Baş Etme', count: COPING_TECHNIQUES.length },
+        { id: 'thought-record' as TabType, label: '✏️ Düşünce Kaydı', shortLabel: '✏️ Kayıt', count: null },
+        { id: 'records' as TabType, label: '📋 Kayıtlar', shortLabel: '📋 Kayıtlar', count: existingRecords.length }
     ];
 
     return (
@@ -95,25 +95,49 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                     </button>
                 </div>
 
-                {/* Tabs */}
-                <div className="flex border-b bg-gray-100 overflow-x-auto flex-shrink-0">
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`py-3 px-5 font-medium text-sm transition-all whitespace-nowrap flex items-center gap-2 border-b-2 -mb-px ${activeTab === tab.id
-                                ? 'text-indigo-600 border-indigo-600 bg-white'
-                                : 'text-gray-600 border-transparent hover:text-gray-800 hover:bg-gray-50'
-                                }`}
-                        >
-                            {tab.label}
-                            {tab.count !== null && (
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === tab.id ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-700'}`}>
-                                    {tab.count}
-                                </span>
-                            )}
-                        </button>
-                    ))}
+                {/* Tabs - Responsive: Mobile grid, Desktop horizontal */}
+                <div className="bg-gray-100 flex-shrink-0">
+                    {/* Desktop Tabs - Hidden on mobile */}
+                    <div className="hidden md:flex border-b overflow-x-auto">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`py-3 px-5 font-medium text-sm transition-all whitespace-nowrap flex items-center gap-2 border-b-2 -mb-px ${activeTab === tab.id
+                                    ? 'text-indigo-600 border-indigo-600 bg-white'
+                                    : 'text-gray-600 border-transparent hover:text-gray-800 hover:bg-gray-50'
+                                    }`}
+                            >
+                                {tab.label}
+                                {tab.count !== null && (
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${activeTab === tab.id ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-700'}`}>
+                                        {tab.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Mobile Tabs - Grid layout, visible only on mobile */}
+                    <div className="md:hidden grid grid-cols-3 gap-1 p-2">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`py-2 px-2 text-xs font-medium rounded-lg transition-all flex flex-col items-center gap-1 ${activeTab === tab.id
+                                    ? 'bg-indigo-600 text-white shadow-md'
+                                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                                    }`}
+                            >
+                                <span>{tab.shortLabel}</span>
+                                {tab.count !== null && (
+                                    <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${activeTab === tab.id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                                        {tab.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Content */}

@@ -89,9 +89,6 @@ const App: React.FC = () => {
             case AppScreen.Education:
                 return (
                     <div className="p-4">
-                        <div className="max-w-5xl mx-auto mb-4">
-                            <Button variant="secondary" onClick={() => setCurrentScreen(AppScreen.Home)}>← Ana Menü</Button>
-                        </div>
                         <EducationModule />
                     </div>
                 );
@@ -100,9 +97,8 @@ const App: React.FC = () => {
                 return (
                     <div className="p-4">
                         <div className="max-w-4xl mx-auto mb-4">
-                            <Button variant="secondary" onClick={() => setCurrentScreen(AppScreen.Home)}>← Ana Menü</Button>
                             {targetModule === AppScreen.Psychosocial && (
-                                <div className="mt-2 bg-purple-50 text-purple-800 p-3 rounded-lg text-base text-center font-medium border border-purple-100">
+                                <div className="bg-purple-50 text-purple-800 p-3 rounded-lg text-base text-center font-medium border border-purple-100">
                                     Motivasyonel Görüşme için danışan seçiniz...
                                 </div>
                             )}
@@ -167,9 +163,20 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-gray-50 pb-12">
             <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <div className="flex items-center cursor-pointer" onClick={() => setCurrentScreen(AppScreen.Home)}>
-                        <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-700 rounded-lg flex items-center justify-center text-white font-bold mr-3 text-lg shadow-md">T</div>
-                        <span className="font-semibold text-slate-800 hidden sm:block text-lg">Tütün Kontrol Asistanı</span>
+                    {/* Logo and Title - Clickable to go home */}
+                    <div
+                        className="flex items-center cursor-pointer group"
+                        onClick={() => setCurrentScreen(AppScreen.Home)}
+                        title="Ana Sayfaya Dön"
+                    >
+                        {/* Lung Icon instead of T */}
+                        <div className="w-11 h-11 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center text-2xl mr-3 shadow-md group-hover:scale-105 transition-transform">
+                            🫁
+                        </div>
+                        <div className="hidden sm:block">
+                            <span className="font-semibold text-slate-800 text-lg block leading-tight">Tütün Kontrol Asistanı</span>
+                            <span className="text-xs text-teal-600 font-medium">🏠 Ana Sayfa</span>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-4">
