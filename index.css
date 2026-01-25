@@ -5,28 +5,12 @@
 /* --- FONT SCALING SYSTEM --- */
 :root {
     --font-scale: 1;
-    --base-size: 16px;
-}
-
-/* Font Size Classes */
-html.font-small {
-    --font-scale: 0.875;
-    --base-size: 14px;
-}
-
-html.font-normal {
-    --font-scale: 1;
-    --base-size: 16px;
-}
-
-html.font-large {
-    --font-scale: 1.125;
-    --base-size: 18px;
 }
 
 /* Apply base font size */
 html {
-    font-size: var(--base-size);
+    font-size: 16px;
+    transition: font-size 0.2s ease;
 }
 
 body {
@@ -43,7 +27,7 @@ body {
 }
 
 /* Larger touch targets for buttons */
-button, 
+button,
 [role="button"],
 .btn {
     min-height: 44px;
@@ -66,13 +50,10 @@ button,
 /* --- IMPROVED SPACING --- */
 
 /* Increase line height for better readability */
-p, li, span {
+p,
+li,
+span {
     line-height: 1.7;
-}
-
-/* More padding in cards */
-.rounded-xl, .rounded-2xl, .rounded-lg {
-    padding: calc(var(--font-scale) * 1rem);
 }
 
 /* --- HEADER IMPROVEMENTS --- */
@@ -80,65 +61,221 @@ header {
     box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-/* --- FONT SIZE SELECTOR STYLES --- */
-.font-size-selector {
+/* --- FONT SIZE CONTROLS (NEW +/- STYLE) --- */
+.font-size-controls {
     display: flex;
     align-items: center;
-    gap: 4px;
-    background: #f1f5f9;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 12px;
     padding: 4px;
+    gap: 2px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.font-size-btn {
+.font-ctrl-btn {
     width: 36px;
     height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #475569;
+    background: white;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.font-ctrl-btn:hover:not(:disabled) {
+    background: #0d9488;
+    color: white;
+    border-color: #0d9488;
+    transform: scale(1.05);
+}
+
+.font-ctrl-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.font-ctrl-display {
+    min-width: 50px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-radius: 6px;
     font-weight: 600;
-    color: #64748b;
+    color: #0d9488;
     background: transparent;
     border: none;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.font-size-btn:hover {
-    background: #e2e8f0;
-    color: #334155;
-}
-
-.font-size-btn.active {
-    background: #0d9488;
-    color: white;
-    box-shadow: 0 2px 4px rgba(13, 148, 136, 0.3);
+.font-ctrl-display:hover {
+    background: rgba(13, 148, 136, 0.1);
 }
 
 /* --- ANIMATION --- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .animate-fadeIn {
     animation: fadeIn 0.3s ease-out;
 }
 
-/* --- RESPONSIVE ADJUSTMENTS --- */
-@media (max-width: 768px) {
-    html.font-large {
-        --base-size: 17px;
-    }
+.animate-slideUp {
+    animation: slideUp 0.5s ease-out;
+}
+
+.animate-pulse-slow {
+    animation: pulse 3s infinite;
+}
+
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+/* --- WELCOME SCREEN ENHANCEMENTS --- */
+.welcome-hero {
+    position: relative;
+    background: linear-gradient(135deg, #0f766e 0%, #115e59 50%, #134e4a 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+    overflow: hidden;
+}
+
+.welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    animation: float 20s linear infinite;
+    pointer-events: none;
+}
+
+.welcome-hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to top, #f9fafb, transparent);
+    pointer-events: none;
+}
+
+.hero-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.hero-card .card-icon {
+    transition: transform 0.4s ease;
+}
+
+.hero-card:hover .card-icon {
+    transform: scale(1.1) rotate(-5deg);
+}
+
+/* Glassmorphism effect */
+.glass {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 /* --- PRINT STYLES --- */
 @media print {
-    header, .font-size-selector {
+
+    header,
+    .font-size-controls {
         display: none;
     }
-    
+
     body {
         font-size: 12pt;
     }

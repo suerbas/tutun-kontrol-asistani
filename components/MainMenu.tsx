@@ -8,81 +8,144 @@ interface MainMenuProps {
 
 export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2 text-center">
-                Tütün Kontrolü ve Bırakma Asistanı
-            </h1>
-            <p className="text-slate-500 mb-8 text-center max-w-xl">
-                Sağlık çalışanları için hazırlanmış eğitim ve klinik takip destek sistemi.
-            </p>
+        <div className="min-h-[90vh]">
+            {/* Hero Section */}
+            <div className="welcome-hero py-16 px-4 text-center relative">
+                <div className="max-w-4xl mx-auto relative z-10">
+                    {/* Floating Icon */}
+                    <div className="animate-float inline-block mb-6">
+                        <div className="w-24 h-24 bg-white/20 backdrop-blur-sm rounded-3xl flex items-center justify-center shadow-2xl border border-white/30">
+                            <span className="text-5xl">🫁</span>
+                        </div>
+                    </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
-                {/* Eğitim Modülü Kartı */}
-                <button
-                    onClick={() => onNavigate(AppScreen.Education)}
-                    className="group relative overflow-hidden rounded-2xl bg-pastel-blue p-6 text-left transition-all hover:shadow-xl hover:scale-[1.02] border border-blue-100 h-64 flex flex-col justify-between"
-                >
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-blue-200 opacity-50 blur-xl group-hover:opacity-75 transition-opacity"></div>
-                    <div>
-                        <h2 className="text-xl font-bold text-blue-900 mb-2">
-                            TÜTÜN KONTROLÜ VE EĞİTİMİ
-                        </h2>
-                        <p className="text-blue-800 text-opacity-80 text-sm">
-                            Tütünün zararları, bağımlılık fizyolojisi, farmakolojik tedaviler ve danışmanlık teknikleri hakkında kapsamlı teorik bilgi.
-                        </p>
-                    </div>
-                    <div className="flex items-center text-blue-700 font-semibold mt-4 text-sm">
-                        Eğitime Başla 
-                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </button>
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 tracking-tight animate-slideUp">
+                        Tütün Kontrolü ve
+                        <span className="block bg-gradient-to-r from-yellow-200 via-amber-200 to-orange-200 bg-clip-text text-transparent">
+                            Bırakma Asistanı
+                        </span>
+                    </h1>
 
-                {/* Klinik Modül Kartı */}
-                <button
-                    onClick={() => onNavigate(AppScreen.PatientList)}
-                    className="group relative overflow-hidden rounded-2xl bg-pastel-green p-6 text-left transition-all hover:shadow-xl hover:scale-[1.02] border border-green-100 h-64 flex flex-col justify-between"
-                >
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-green-200 opacity-50 blur-xl group-hover:opacity-75 transition-opacity"></div>
-                    <div>
-                        <h2 className="text-xl font-bold text-green-900 mb-2">
-                            SİGARAYI BIRAKTIRMA MODÜLÜ
-                        </h2>
-                        <p className="text-green-800 text-opacity-80 text-sm">
-                            Danışan takibi, Fagerström testi, 5A/5R modelleri ile adım adım klinik müdahale ve tedavi planlama sihirbazı.
-                        </p>
-                    </div>
-                    <div className="flex items-center text-green-700 font-semibold mt-4 text-sm">
-                        Modüle Git
-                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </button>
+                    <p className="text-teal-100 text-lg md:text-xl max-w-2xl mx-auto mb-8 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+                        Sağlık çalışanları için hazırlanmış
+                        <strong className="text-white"> kapsamlı eğitim</strong> ve
+                        <strong className="text-white"> klinik takip</strong> destek sistemi
+                    </p>
 
-                {/* Psikososyal Destek Modülü Kartı (YENİ) */}
-                <button
-                    onClick={() => onNavigate(AppScreen.Psychosocial)}
-                    className="group relative overflow-hidden rounded-2xl bg-purple-50 p-6 text-left transition-all hover:shadow-xl hover:scale-[1.02] border border-purple-100 h-64 flex flex-col justify-between"
-                >
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 h-32 w-32 rounded-full bg-purple-200 opacity-50 blur-xl group-hover:opacity-75 transition-opacity"></div>
-                    <div>
-                        <h2 className="text-xl font-bold text-purple-900 mb-2">
-                            MOTİVASYONEL GÖRÜŞME & BDT
-                        </h2>
-                        <span className="inline-block bg-purple-200 text-purple-800 text-xs px-2 py-1 rounded-full mb-2 font-bold">Özel Gruplar (Gebe/Ergen)</span>
-                        <p className="text-purple-800 text-opacity-80 text-sm">
-                            Bilişsel Davranışçı Terapi ve Motivasyonel Görüşme teknikleriyle adım adım rehberli psikososyal destek modülü.
-                        </p>
+                    {/* Stats */}
+                    <div className="flex flex-wrap justify-center gap-6 mb-8 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+                        <div className="glass rounded-xl px-6 py-3 text-white">
+                            <div className="text-2xl font-bold">5A</div>
+                            <div className="text-teal-200 text-sm">Klinik Model</div>
+                        </div>
+                        <div className="glass rounded-xl px-6 py-3 text-white">
+                            <div className="text-2xl font-bold">BDT</div>
+                            <div className="text-teal-200 text-sm">Araçları</div>
+                        </div>
+                        <div className="glass rounded-xl px-6 py-3 text-white">
+                            <div className="text-2xl font-bold">MI</div>
+                            <div className="text-teal-200 text-sm">Teknikleri</div>
+                        </div>
+                        <div className="glass rounded-xl px-6 py-3 text-white">
+                            <div className="text-2xl font-bold">8+</div>
+                            <div className="text-teal-200 text-sm">İlaç Protokolü</div>
+                        </div>
                     </div>
-                    <div className="flex items-center text-purple-700 font-semibold mt-4 text-sm">
-                        Görüşmeye Başla
-                        <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </button>
+                </div>
+            </div>
+
+            {/* Cards Section */}
+            <div className="max-w-6xl mx-auto px-4 -mt-8 relative z-20 pb-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {/* Eğitim Modülü Kartı */}
+                    <button
+                        onClick={() => onNavigate(AppScreen.Education)}
+                        className="hero-card group rounded-3xl p-8 text-left shadow-xl h-80 flex flex-col justify-between"
+                    >
+                        <div>
+                            <div className="card-icon w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg">
+                                📚
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-3">
+                                Tütün Kontrolü Eğitimi
+                            </h2>
+                            <p className="text-slate-600 leading-relaxed">
+                                Tütünün zararları, bağımlılık fizyolojisi, farmakolojik tedaviler ve danışmanlık teknikleri hakkında kapsamlı teorik bilgi.
+                            </p>
+                        </div>
+                        <div className="flex items-center text-blue-600 font-bold group-hover:text-blue-700">
+                            Eğitime Başla
+                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    {/* Klinik Modül Kartı */}
+                    <button
+                        onClick={() => onNavigate(AppScreen.PatientList)}
+                        className="hero-card group rounded-3xl p-8 text-left shadow-xl h-80 flex flex-col justify-between"
+                    >
+                        <div>
+                            <div className="card-icon w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg">
+                                🩺
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-3">
+                                Sigarayı Bıraktırma
+                            </h2>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-medium">5A Model</span>
+                                <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full font-medium">5R Model</span>
+                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Fagerström</span>
+                            </div>
+                            <p className="text-slate-600 leading-relaxed">
+                                Danışan takibi ve adım adım klinik müdahale sihirbazı ile tedavi planlama.
+                            </p>
+                        </div>
+                        <div className="flex items-center text-emerald-600 font-bold group-hover:text-emerald-700">
+                            Modüle Git
+                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </div>
+                    </button>
+
+                    {/* Psikososyal Destek Modülü Kartı */}
+                    <button
+                        onClick={() => onNavigate(AppScreen.Psychosocial)}
+                        className="hero-card group rounded-3xl p-8 text-left shadow-xl h-80 flex flex-col justify-between md:col-span-2 lg:col-span-1"
+                    >
+                        <div>
+                            <div className="card-icon w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg">
+                                🧠
+                            </div>
+                            <h2 className="text-2xl font-bold text-slate-800 mb-3">
+                                Motivasyonel Görüşme & BDT
+                            </h2>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">Özel Gruplar</span>
+                                <span className="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded-full font-medium">Gebe/Ergen</span>
+                            </div>
+                            <p className="text-slate-600 leading-relaxed">
+                                Bilişsel Davranışçı Terapi araçları ve adım adım rehberli psikososyal destek.
+                            </p>
+                        </div>
+                        <div className="flex items-center text-purple-600 font-bold group-hover:text-purple-700">
+                            Görüşmeye Başla
+                            <svg className="w-5 h-5 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+
+                {/* Footer Info */}
+                <div className="mt-12 text-center">
+                    <p className="text-slate-500 text-sm">
+                        🏥 Sağlık Bakanlığı rehberleri ve güncel kanıta dayalı uygulamalar referans alınarak hazırlanmıştır.
+                    </p>
+                </div>
             </div>
         </div>
     );
