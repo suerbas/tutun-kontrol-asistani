@@ -191,7 +191,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
         const pastHomeworks: string[] = [];
         patient.visits.forEach(v => {
             if (v.notes.includes('Tetikleyiciler:')) {
-                const match = v.notes.match(/Tetikleyiciler: (.*?)\./);
+                const match = v.notes.match(/Tetikleyiciler: ([^|.]*)/);
                 if (match && match[1]) {
                     match[1].split(',').forEach(t => pastTriggers.add(t.trim()));
                 }
@@ -229,7 +229,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
         // Kısa ve öz visit notu
         let visitNote = `Seans #${(patient.psychosocialStatus?.sessionCount || 0) + 1}`;
         visitNote += ` | Evre: ${progressText}`;
-        if (currentScore !== null) visitNote += ` | Skor: ${currentScore}/10`;
+        if (currentScore !== undefined) visitNote += ` | Skor: ${currentScore}/10`;
         visitNote += ` | ${mainNotes}`;
         if (triggersText) visitNote += ` | Tetikleyiciler: ${triggersText}`;
         if (finalHomework && finalHomework !== 'Yok') visitNote += ` | Ödev: ${finalHomework}`;

@@ -75,7 +75,7 @@ export const EducationModule: React.FC = () => {
                                 </ul>
                             </div>
                             <div className="bg-red-50 p-6 rounded-xl border border-red-100">
-                                <h3 className="font-bold text-red-900 mb-4">⚠️ Endüstri Taktikleri (9D)</h3>
+                                <h3 className="font-bold text-red-900 mb-4">⚠️ Endüstri Taktikleri</h3>
                                 <p className="text-sm text-red-800 mb-4">
                                     Tütün endüstrisi, özellikle <strong>gençleri ve kadınları</strong> hedef alır.
                                 </p>
@@ -118,7 +118,7 @@ export const EducationModule: React.FC = () => {
                                         <strong>CO (Karbonmonoksit) Ölçümü:</strong> Beyanı doğrular ve motivasyon sağlar.
                                         <div className="mt-1 text-xs text-gray-500 flex gap-2">
                                             <span className="text-green-600">0-6 ppm: İçmiyor</span>
-                                            <span className="text-red-600">&gt;10 ppm: İçici</span>
+                                            <span className="text-amber-600">7-10 ppm: Belirsiz</span> <span className="text-red-600">&gt;10 ppm: İçici</span>
                                         </div>
                                     </li>
                                 </ul>
@@ -258,7 +258,7 @@ export const EducationModule: React.FC = () => {
                         </header>
 
                         <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
-                            <h3 className="font-bold text-indigo-900 mb-2">DDD Modeli</h3>
+                            <h3 className="font-bold text-indigo-900 mb-2">Duygu-Düşünce-Davranış Modeli</h3>
                             <p className="text-indigo-800 text-sm">
                                 <strong>Duygu → Düşünce → Davranış</strong> zincirini kırmak. Sigara içme davranışını tetikleyen duyguyu ve otomatik düşünceyi ("Sigara beni rahatlatır") fark edip çürütmek.
                             </p>
@@ -351,7 +351,7 @@ export const EducationModule: React.FC = () => {
                                     İlaç (Bupropion/Vareniklin) <strong>önerilmez.</strong> Öncelik psikososyal destektir.
                                 </p>
                                 <p className="text-sm text-pink-800">
-                                    Zorunlu hallerde, kar/zarar hesabı yapılarak hekim kararıyla 16 saatlik NRT bantları (gece çıkarılan) kullanılabilir.
+                                    Zorunlu hallerde NRT, özellikle sakız veya pastil gibi kısa etkili formlarla, hekimin fayda-zarar değerlendirmesi sonrasında düşünülebilir.
                                 </p>
                             </div>
 
@@ -368,7 +368,7 @@ export const EducationModule: React.FC = () => {
                             <div className="bg-red-50 p-6 rounded-xl border border-red-100 md:col-span-2">
                                 <h3 className="font-bold text-red-900 text-lg mb-3">❤️ Kalp Hastaları</h3>
                                 <p className="text-sm text-red-800">
-                                    Akut koroner sendrom (kriz) sonrası <strong>ilk 2 hafta</strong> NRT önerilmez. Stabil hastalarda güvenlidir. Vareniklin kardiyovasküler hastalarda güvenle kullanılabilir.
+                                    Akut koroner sendrom (kriz) sonrası <strong>ilk 2 hafta</strong> NRT önerilmez. Stabil hastalarda güvenlidir. Vareniklin kardiyovasküler hastalarda hekim değerlendirmesiyle kullanılabilir.
                                 </p>
                             </div>
                         </div>

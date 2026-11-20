@@ -10,7 +10,7 @@ export const COGNITIVE_DISTORTIONS = [
         challenge: 'Bir kayma (slip) nüks (relaps) değildir. Yolculuğa devam edebilirsin.',
         clientReactions: [
             { reaction: '"Ama bir tane içtim, artık her şey bitti!"', response: 'Bir kayma, yolculuğun sonu değil. Düştüğünüz yerden kalkmak önemli. Bugüne kadar içmediğiniz sigaralar hâlâ kazanılmış zaferlerdir.' },
-            { reaction: '"Ya tamamen bırakırım ya hiç uğraşmam."', response: 'Azaltma da bir başarıdır. Günde 20 yerine 10 sigara içmek, vücudunuzun maruz kaldığı zararı yarıya indirmek demektir.' }
+            { reaction: '"Ya tamamen bırakırım ya hiç uğraşmam."', response: 'Azaltma da bir başarıdır. Günde 20 yerine 10 sigara içmek, maruz kaldığınız zararı önemli ölçüde azaltır.' }
         ],
         therapeuticQuestions: [
             'Bu düşünce sizi nasıl hissettiriyor?',
@@ -135,7 +135,7 @@ export const COGNITIVE_DISTORTIONS = [
         smokingExample: '"Daha önce denedim olmadı, bu sefer de olmayacak."',
         challenge: 'Her deneme farklıdır. Bu sefer farklı araçların ve desteğin var.',
         clientReactions: [
-            { reaction: '"5 kez denedim, hep başarısız oldum."', response: 'Ortalama bir kişi 7-10 deneme sonrası başarılı oluyor. Her deneme sizi hedefe yaklaştırıyor ve neyin işe yaramadığını öğretiyor.' },
+            { reaction: '"5 kez denedim, hep başarısız oldum."', response: 'Bırakanların çoğu birden fazla deneme yapmıştır. Her deneme sizi hedefe yaklaştırıyor ve neyin işe yaramadığını öğretiyor.' },
             { reaction: '"Benim için geç, artık zarar verildi."', response: 'Bırakmanın faydaları dakikalar içinde başlar. 1 yıl sonra kalp krizi riskiniz yarıya iner. Asla geç değildir.' }
         ],
         therapeuticQuestions: [
@@ -306,7 +306,7 @@ export const CBT_CLIENT_RESISTANCE = [
         empatheticResponse: 'Dedenizin uzun yaşamış olması güzel bir şey. Ailedeki örnekler bizi etkiler.',
         socraticQuestion: 'Dedeniz sigara içmeseydi belki 100 yaşına kadar yaşar mıydı? Sizce dedenizin şansı herkes için geçerli mi?',
         miTechnique: 'Bilgi Verme (İzinle): "Size bazı istatistikler paylaşabilir miyim? Sigara içenlerin yarısı sigaraya bağlı hastalıklardan ölüyor."',
-        alternativePerspective: 'Her bireyin genetiği farklıdır. Ayrıca eskiden tütün daha az kimyasal içeriyordu. Bugünkü sigaralar çok daha zararlı maddeler içeriyor.'
+        alternativePerspective: 'Her bireyin genetiği farklıdır. Uzun yaşayan bir sigara içicisi, sigaranın zararsız olduğu anlamına gelmez; riskler kişiden kişiye değişir.'
     },
     {
         id: 'tried_failed',
@@ -315,7 +315,7 @@ export const CBT_CLIENT_RESISTANCE = [
         empatheticResponse: 'Defalarca deneyip başaramamak gerçekten yorucu ve hayal kırıklığı yaratıyor. Bu kadar ısrar etmeniz aslında ne kadar istediğinizi gösteriyor.',
         socraticQuestion: 'Bu 10 denemede size en çok ne yardımcı oldu? Hangi denemede en uzun süre dayanabildiniz ve o dönem neyi farklı yaptınız?',
         miTechnique: 'Öz-Yeterlilik Desteği: "10 kez denemeniz, sigarasız bir hayat istediğinizi gösteriyor. Bu kararlılık önemli bir güç."',
-        alternativePerspective: 'Araştırmalar ortalama 7-10 deneme sonrası başarının geldiğini gösteriyor. Her deneme neyin işe yaramadığını öğretiyor. Bu sefer farklı araçlarınız var: ilaç tedavisi, danışmanlık desteği.'
+        alternativePerspective: 'Bırakanların çoğu birden fazla deneme yapmıştır. Her deneme neyin işe yaramadığını öğretiyor. Bu sefer farklı araçlarınız var: ilaç tedavisi, danışmanlık desteği.'
     },
     {
         id: 'one_wont_hurt',
@@ -332,7 +332,7 @@ export const CBT_CLIENT_RESISTANCE = [
         statement: '"Bırakırsam kilo alırım, o da sağlıksız."',
         empatheticResponse: 'Kilo alma endişesi çok yaygın ve anlaşılır bir kaygı. Görünümünüz ve sağlığınız sizin için önemli.',
         socraticQuestion: 'Sigara içmeye devam etmenin riskleri ile olası 2-3 kg alımın riskleri karşılaştırılsa hangisi daha ağır basar?',
-        miTechnique: 'Bilgi Sunma: "Ortalama kilo alımı 2-4 kg ve bu kontrol edilebilir. 40 sigara içmenin eşdeğeri olan sağlık zararına ulaşmak için 40 kg almanız gerekirdi."',
+        miTechnique: 'Bilgi Sunma: "Ortalama kilo alımı 2-4 kg düzeyindedir ve kontrol edilebilir. Sigaranın sağlığa zararı ise kilo almaktan çok daha büyüktür."',
         alternativePerspective: 'Kilo kontrolü mümkündür: Düzenli egzersiz, sağlıklı atıştırmalıklar. Sigara bırakıldığında metabolizma yavaşlar ama bu geçicidir. İlaç tedavileri kilo alımını azaltabilir.'
     },
     {
@@ -360,7 +360,7 @@ export const CBT_CLIENT_RESISTANCE = [
         empatheticResponse: 'Sigara içmekten keyif aldığınızı söylemeniz önemli. Bu sizin dürüstlüğünüzü gösteriyor.',
         socraticQuestion: 'Günde kaç sigaradan gerçekten keyif alıyorsunuz? Her sigarayı aynı zevkle mi içiyorsunuz, yoksa bazıları sadece alışkanlık mı?',
         miTechnique: 'Ambivalansı Keşfetme: "Sigara içmekle ilgili hoşunuza gitmeyen herhangi bir şey var mı? En ufak bir endişeniz?"',
-        alternativePerspective: 'Araştırmalar gösteriyor ki sigara içenlerin %70\'i bırakmak istiyor. Günde içilen 20 sigaranın belki 2-3\'ü "keyif sigarası", geri kalanı yoksunluktan kaçış.'
+        alternativePerspective: 'Sigara içenlerin büyük çoğunluğu bırakmak istediğini belirtir. Keyif verdiğini düşündüğünüz sigaraların önemli bir kısmı aslında yoksunluğu gidermek için içilir.'
     }
 ];
 

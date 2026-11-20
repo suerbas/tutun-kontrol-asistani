@@ -4,10 +4,21 @@ import { Button } from '../Button';
 import { InterventionStep } from './types';
 import { Wrapper } from './Wrapper';
 import { PHARMACOLOGICAL_TREATMENTS, FIVE_R_DETAILS } from '../../constants';
+import {
+    BEHAVIORAL_ONLY,
+    DRUG_BUPROPION,
+    DRUG_NRT_BANT,
+    DRUG_NRT_SAKIZ,
+    DRUG_VARENIKLIN,
+    checkDrugSafety,
+    isDrugBlocked
+} from './safety';
 
 interface AssistMedStepProps {
     patient: Patient;
     score: number;
+    /** Bu görüşmede Fagerström testi yapıldı mı? Yapılmadıysa skor kullanılmaz. */
+    scoreAssessed: boolean;
     isReady: boolean | null;
     selectedTreatment: string;
     notes: string;
@@ -24,6 +35,7 @@ interface AssistMedStepProps {
 export const AssistMedStep: React.FC<AssistMedStepProps> = ({
     patient,
     score,
+    scoreAssessed,
     isReady,
     selectedTreatment,
     notes,
@@ -36,37 +48,70 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
     onBack,
     onSaveVisit
 }) => {
+    // Skor yalnızca bu görüşmede ölçüldüyse kullanılır.
+    const knownScore: number | null = scoreAssessed ? score : null;
+
     // === CLINICAL RECOMMENDATION ENGINE ===
-    const getClinicalRecommendation = (): { name: string; reason: string; priority: 'high' | 'medium' | 'low' } => {
+    const getBaseRecommendation = (): { name: string; reason: string; priority: 'high' | 'medium' | 'low' } => {
         const has = (comorbidity: string) => patient.comorbidities.includes(comorbidity);
-        if (has(COMORBIDITIES.PREGNANCY)) return { name: 'Nikotin Replasman Tedavisi (NRT) - Sakız', reason: 'Gebelerde ilk tercih davranışsal destektir. İlaç gerekirse, aralıklı formlar tercih edilir.', priority: 'high' };
+        const highDependence = knownScore !== null && knownScore >= 7;
+        if (has(COMORBIDITIES.PREGNANCY)) return { name: DRUG_NRT_SAKIZ, reason: 'Gebelerde ilk tercih davranışsal destektir. İlaç gerekirse, aralıklı formlar tercih edilir.', priority: 'high' };
         if (has(COMORBIDITIES.EPILEPSY)) {
-            if (score >= 7) return { name: 'Vareniklin', reason: 'Yüksek bağımlılık skoru nedeniyle güçlü ajan gerekir. Epilepsi öyküsü olduğu için Bupropion kontrendikedir.', priority: 'high' };
-            return { name: 'Nikotin Replasman Tedavisi (NRT) - Bant', reason: 'Epilepsi nedeniyle Bupropion kullanılamaz. NRT Bant güvenli ve etkilidir.', priority: 'high' };
+            if (highDependence) return { name: DRUG_VARENIKLIN, reason: 'Yüksek bağımlılık skoru nedeniyle güçlü ajan gerekir. Epilepsi öyküsü olduğu için Bupropion kontrendikedir.', priority: 'high' };
+            return { name: DRUG_NRT_BANT, reason: 'Epilepsi nedeniyle Bupropion kullanılamaz. NRT Bant güvenli ve etkilidir.', priority: 'high' };
         }
-        if (has(COMORBIDITIES.DEPRESSION)) return { name: 'Bupropion HCl', reason: 'Hastanın depresyon öyküsü mevcuttur. Bupropion antidepresan özellik de taşır.', priority: 'medium' };
-        if (score >= 7 || patient.dailyAmount > 20) {
-            if (has(COMORBIDITIES.RENAL)) return { name: 'Nikotin Replasman Tedavisi (NRT) - Bant', reason: 'Yüksek bağımlılık var ancak böbrek yetmezliği nedeniyle NRT daha güvenlidir.', priority: 'medium' };
-            return { name: 'Vareniklin', reason: `Bağımlılık skoru yüksek (${score}/10). Vareniklin en etkili seçenektir.`, priority: 'high' };
+        if (has(COMORBIDITIES.DEPRESSION)) return { name: DRUG_BUPROPION, reason: 'Hastanın depresyon öyküsü mevcuttur. Bupropion antidepresan özellik de taşır.', priority: 'medium' };
+        if (highDependence || patient.dailyAmount > 20) {
+            if (has(COMORBIDITIES.RENAL)) return { name: DRUG_NRT_BANT, reason: 'Yüksek bağımlılık var ancak böbrek yetmezliği nedeniyle NRT daha güvenlidir.', priority: 'medium' };
+            const why = knownScore !== null
+                ? `Bağımlılık skoru yüksek (${knownScore}/10).`
+                : `Günlük sigara sayısı yüksek (${patient.dailyAmount}/gün).`;
+            return { name: DRUG_VARENIKLIN, reason: `${why} Vareniklin en etkili seçenektir.`, priority: 'high' };
         }
-        if (has(COMORBIDITIES.SKIN_SENSITIVITY)) return { name: 'Vareniklin', reason: 'Cilt hassasiyeti nedeniyle NRT Bant tavsiye edilmez. Oral formlar tercih edilmelidir.', priority: 'medium' };
-        if (score <= 3 && patient.dailyAmount < 10) return { name: 'Sadece Davranışsal', reason: 'Fiziksel bağımlılık düşük. Davranışsal destek yeterli olabilir.', priority: 'medium' };
-        return { name: 'Nikotin Replasman Tedavisi (NRT) - Bant', reason: 'Orta düzey bağımlılık için standart başlangıç tedavisidir.', priority: 'low' };
+        if (has(COMORBIDITIES.SKIN_SENSITIVITY)) return { name: DRUG_VARENIKLIN, reason: 'Cilt hassasiyeti nedeniyle NRT Bant tavsiye edilmez. Oral formlar tercih edilmelidir.', priority: 'medium' };
+        if (knownScore !== null && knownScore <= 3 && patient.dailyAmount < 10) return { name: BEHAVIORAL_ONLY, reason: 'Fiziksel bağımlılık düşük. Davranışsal destek yeterli olabilir.', priority: 'medium' };
+        return { name: DRUG_NRT_BANT, reason: 'Orta düzey bağımlılık için standart başlangıç tedavisidir.', priority: 'low' };
+    };
+
+    // Güvenlik kuralı: kontrendike bir ilaç önerilemez; alternatif seçilir.
+    const getClinicalRecommendation = (): { name: string; reason: string; priority: 'high' | 'medium' | 'low' } => {
+        const base = getBaseRecommendation();
+        if (!isDrugBlocked(patient, base.name)) return base;
+
+        const blockReason = checkDrugSafety(patient, base.name).blocking.join(' ');
+        const alternative = [DRUG_NRT_BANT, DRUG_NRT_SAKIZ].find(d => !isDrugBlocked(patient, d));
+        if (alternative) {
+            return {
+                name: alternative,
+                reason: `${blockReason} Bu nedenle ${base.name} önerilmedi; ${alternative} değerlendirilebilir.`,
+                priority: 'medium'
+            };
+        }
+        return {
+            name: BEHAVIORAL_ONLY,
+            reason: `${blockReason} Uygun bir ilaç önerilemedi; davranışsal destek ve hekim değerlendirmesi gerekir.`,
+            priority: 'medium'
+        };
     };
 
     const getTreatmentReasoning = (treatmentName: string) => {
         const reasons: { type: 'success' | 'warning' | 'info'; text: string }[] = [];
         if (treatmentName.includes('Bupropion')) {
             if (patient.comorbidities.includes(COMORBIDITIES.DEPRESSION)) reasons.push({ type: 'success', text: 'Bupropion depresyon öyküsü için iyi bir seçenektir.' });
-            if (patient.comorbidities.includes(COMORBIDITIES.EPILEPSY)) reasons.push({ type: 'warning', text: 'KONTRENDİKASYON: Epilepsi öyküsünde Bupropion kullanılmamalıdır!' });
         }
         if (treatmentName.includes('Bant')) {
-            if (patient.dailyAmount > 20) reasons.push({ type: 'info', text: `Hasta günde ${patient.dailyAmount} sigara içtiği için TAM DOZ (21mg) başlanmalıdır.` });
-            if (patient.comorbidities.includes(COMORBIDITIES.SKIN_SENSITIVITY)) reasons.push({ type: 'warning', text: 'Cilt hassasiyeti varsa bant tahriş yapabilir.' });
+            // NRT bant dozu: günde >10 sigara 21 mg, ≤10 sigara 14 mg.
+            if (patient.dailyAmount > 10) reasons.push({ type: 'info', text: `Hasta günde ${patient.dailyAmount} sigara içtiği için TAM DOZ (21mg/24 saat) başlanmalıdır.` });
+            else reasons.push({ type: 'info', text: `Hasta günde ${patient.dailyAmount} sigara içtiği için 14 mg/24 saat dozu başlanmalıdır.` });
         }
         if (treatmentName.includes('Vareniklin')) {
             reasons.push({ type: 'success', text: 'Yüksek bağımlılıkta en etkili ajanlardan biridir.' });
-            if (patient.comorbidities.includes(COMORBIDITIES.RENAL)) reasons.push({ type: 'warning', text: 'Böbrek yetmezliğinde doz ayarlaması gerekir.' });
+        }
+        // Kontrendikasyonlar ve uyarılar ilaç bazında kurallardan gelir.
+        if (treatmentName && treatmentName !== BEHAVIORAL_ONLY) {
+            const safety = checkDrugSafety(patient, treatmentName);
+            safety.blocking.forEach(text => reasons.push({ type: 'warning', text: `KONTRENDİKASYON: ${text}` }));
+            safety.warnings.forEach(text => reasons.push({ type: 'warning', text }));
         }
         return reasons;
     };
@@ -128,9 +173,15 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
     const selectedDrugInfo = PHARMACOLOGICAL_TREATMENTS.find(d => d.name === selectedTreatment);
     const reasons = getTreatmentReasoning(selectedTreatment);
     const recommendation = getClinicalRecommendation();
+    const selectedBlocked = !!selectedTreatment && isDrugBlocked(patient, selectedTreatment);
 
     return (
         <Wrapper title="4. ASSIST (TEDAVİ SEÇİMİ) & 5. ARRANGE (İZLEM)" currentStep={InterventionStep.Assist_Med} isReady={isReady}>
+            {!scoreAssessed && (
+                <div className="mb-4 p-3 rounded-lg bg-gray-100 border border-gray-300 text-sm text-gray-700">
+                    Bu görüşmede Fagerström testi yapılmadı. Öneri günlük sigara sayısı ve komorbiditelere göre hesaplandı; bağımlılık düzeyi bilinmiyor.
+                </div>
+            )}
             <div className={`mb-6 p-4 rounded-xl border-l-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between ${recommendation.priority === 'high' ? 'bg-teal-50 border-teal-500' : 'bg-blue-50 border-blue-500'}`}>
                 <div className="flex-grow">
                     <h3 className={`font-bold text-sm uppercase flex items-center mb-1 ${recommendation.priority === 'high' ? 'text-teal-800' : 'text-blue-800'}`}>
@@ -152,9 +203,16 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
                     <h3 className="font-bold text-slate-800 border-b pb-2">Tedavi Yöntemi</h3>
                     <select className="w-full p-3 border rounded-lg bg-white shadow-sm text-lg" value={selectedTreatment} onChange={(e) => onSetSelectedTreatment(e.target.value)}>
                         <option value="">-- Seçiniz --</option>
-                        <option value="Sadece Davranışsal">Sadece Davranışsal Destek (İlaçsız)</option>
+                        <option value={BEHAVIORAL_ONLY}>Sadece Davranışsal Destek (İlaçsız)</option>
                         <option disabled>──────────</option>
-                        {PHARMACOLOGICAL_TREATMENTS.map((drug, idx) => <option key={idx} value={drug.name}>{drug.name}</option>)}
+                        {PHARMACOLOGICAL_TREATMENTS.map((drug, idx) => {
+                            const blocked = isDrugBlocked(patient, drug.name);
+                            return (
+                                <option key={idx} value={drug.name} disabled={blocked}>
+                                    {drug.name}{blocked ? ' (kontrendike)' : ''}
+                                </option>
+                            );
+                        })}
                     </select>
                     {selectedTreatment && reasons.length > 0 && (
                         <div className="bg-white border rounded-lg p-3 space-y-2 shadow-sm">
@@ -166,13 +224,18 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
                             ))}
                         </div>
                     )}
+                    {selectedBlocked && (
+                        <div className="bg-red-100 border border-red-300 text-red-900 rounded-lg p-3 text-sm font-medium">
+                            Bu ilaç bu hasta için kontrendikedir ve kaydedilemez. Lütfen başka bir tedavi seçin.
+                        </div>
+                    )}
                     <div>
                         <label className="block font-bold text-slate-700 mb-2 text-sm">Klinik Notlar:</label>
                         <textarea className="w-full border rounded p-2 h-20 text-sm" placeholder="Özel notlar..." value={notes} onChange={(e) => onSetNotes(e.target.value)}></textarea>
                     </div>
                 </div>
                 <div className="md:col-span-7">
-                    {selectedTreatment && selectedTreatment !== 'Sadece Davranışsal' && selectedDrugInfo ? (
+                    {selectedTreatment && selectedTreatment !== BEHAVIORAL_ONLY && selectedDrugInfo ? (
                         <div className="bg-white border-2 border-teal-100 rounded-xl overflow-hidden shadow-lg h-full flex flex-col">
                             <div className="bg-teal-50 p-4 border-b border-teal-100 flex justify-between items-center">
                                 <h3 className="font-bold text-teal-900 text-lg">{selectedDrugInfo.commercialName} Protokolü</h3>
@@ -199,7 +262,7 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
                                 </div>
                             </div>
                         </div>
-                    ) : selectedTreatment === 'Sadece Davranışsal' ? (
+                    ) : selectedTreatment === BEHAVIORAL_ONLY ? (
                         <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 h-full flex flex-col items-center justify-center text-center text-blue-800">
                             <h3 className="text-xl font-bold mb-2">İlaçsız Takip</h3>
                             <p>Farmakolojik tedavi başlanmadı. Davranışsal destek uygulanacak.</p>
@@ -215,7 +278,7 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
 
             <div className="flex justify-between mt-auto pt-6">
                 <Button variant="secondary" onClick={onBack}>Geri</Button>
-                <Button onClick={onSaveVisit} disabled={!selectedTreatment} className="px-8">Tedaviyi Onayla ve Bitir</Button>
+                <Button onClick={onSaveVisit} disabled={!selectedTreatment || selectedBlocked} className="px-8">Tedaviyi Onayla ve Bitir</Button>
             </div>
         </Wrapper>
     );

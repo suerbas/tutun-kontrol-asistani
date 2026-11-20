@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Patient, Visit, DependenceLevel, TreatmentStatus } from '../types';
 import { BEHAVIORAL_GUIDE, PHARMACOLOGICAL_TREATMENTS, FIVE_R_DETAILS } from '../constants';
 import { patientService } from '../services/patientService';
+import { BEHAVIORAL_ONLY, isDrugBlocked } from './intervention/safety';
 
 // Alt bileşenler
 import {
@@ -32,6 +33,8 @@ export const InterventionModule: React.FC<InterventionProps> = ({ patient, onBac
     );
     const [fagerstromAnswers, setFagerstromAnswers] = useState<number[]>(new Array(6).fill(-1));
     const [score, setScore] = useState(0);
+    // Fagerström testi bu görüşmede gerçekten yapıldı mı? Yapılmadıysa skor kaydedilmez.
+    const [fagerstromAssessed, setFagerstromAssessed] = useState(false);
     const [dependence, setDependence] = useState<DependenceLevel>(DependenceLevel.Low);
     const [isReady, setIsReady] = useState<boolean | null>(null);
     const [selectedTreatment, setSelectedTreatment] = useState<string>('');
@@ -65,6 +68,7 @@ export const InterventionModule: React.FC<InterventionProps> = ({ patient, onBac
     const calculateScore = () => {
         const total = fagerstromAnswers.reduce((a, b) => a + (b === -1 ? 0 : b), 0);
         setScore(total);
+        setFagerstromAssessed(true);
         if (total <= 2) setDependence(DependenceLevel.Low);
         else if (total <= 7) setDependence(DependenceLevel.Medium);
         else setDependence(DependenceLevel.High);
@@ -93,6 +97,12 @@ export const InterventionModule: React.FC<InterventionProps> = ({ patient, onBac
     };
 
     const saveVisit = () => {
+        // Kontrendike ilaç kaydedilemez (arayüzde de engellenir; bu ikinci güvence).
+        if (selectedTreatment && selectedTreatment !== BEHAVIORAL_ONLY && isDrugBlocked(patient, selectedTreatment)) {
+            alert('Seçilen ilaç bu hasta için kontrendikedir. Lütfen başka bir tedavi seçin.');
+            return;
+        }
+
         // İngilizce ID'leri Türkçe isimlere çevir
         const triggerNames = selectedTriggers.map(id => {
             const trigger = BEHAVIORAL_GUIDE.find(b => b.id === id);
@@ -105,24 +115,38 @@ export const InterventionModule: React.FC<InterventionProps> = ({ patient, onBac
             const items = FIVE_R_DETAILS.flatMap(r => r.items).filter(i => selectedRItems.includes(i.id));
             fiveRNotes = `5R Bulguları: ${items.map(i => i.text).join(', ')}. `;
         }
+        const fagerstromNote = fagerstromAssessed
+            ? `Fagerström: ${score} (${dependence}). `
+            : 'Fagerström: bu görüşmede ölçülmedi. ';
         const visit: Visit = {
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('tr-TR'),
             status: isReady ? TreatmentStatus.Active : TreatmentStatus.New,
-            notes: `Fagerström: ${score} (${dependence}). ${isReady ? 'Bırakmaya hazır.' : 'Hazır değil (5R uygulandı).'} ${behavioralNotes} ${fiveRNotes}Tedavi: ${selectedTreatment}. Notlar: ${notes}`,
+            notes: `${fagerstromNote}${isReady ? 'Bırakmaya hazır.' : 'Hazır değil (5R uygulandı).'} ${behavioralNotes} ${fiveRNotes}Tedavi: ${selectedTreatment}. Notlar: ${notes}`,
             treatmentType: selectedTreatment
         };
-        let updatedPatient = { ...patient };
-        if (selectedTreatment && selectedTreatment !== 'Sadece Davranışsal') {
+        const today = new Date().toLocaleDateString('tr-TR');
+        const updatedPatient: Patient = { ...patient };
+        if (fagerstromAssessed) {
+            updatedPatient.fagerstromScore = score;
+        }
+        if (selectedTreatment && selectedTreatment !== BEHAVIORAL_ONLY) {
             const drugInfo = PHARMACOLOGICAL_TREATMENTS.find(t => t.name === selectedTreatment);
             updatedPatient.activeTreatment = {
                 drugName: selectedTreatment,
                 commercialName: drugInfo?.commercialName,
-                startDate: new Date().toLocaleDateString('tr-TR'),
+                startDate: today,
                 dosage: drugInfo?.dosage,
                 isActive: true
             };
-            updatedPatient.fagerstromScore = score;
+        } else if (selectedTreatment === BEHAVIORAL_ONLY && patient.activeTreatment?.isActive) {
+            // Hekim ilaçsız takibe geçti: önceki ilaç tedavisi kayıtta açık kalmasın.
+            updatedPatient.activeTreatment = {
+                ...patient.activeTreatment,
+                isActive: false,
+                endDate: today,
+                endReason: 'Davranışsal desteğe geçildi'
+            };
         }
         updatedPatient.visits = [...updatedPatient.visits, visit];
         patientService.savePatient(updatedPatient);
@@ -240,6 +264,7 @@ export const InterventionModule: React.FC<InterventionProps> = ({ patient, onBac
             <AssistMedStep
                 patient={patient}
                 score={score}
+                scoreAssessed={fagerstromAssessed}
                 isReady={isReady}
                 selectedTreatment={selectedTreatment}
                 notes={notes}

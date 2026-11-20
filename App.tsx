@@ -210,14 +210,18 @@ const App: React.FC = () => {
                         {currentScreen !== AppScreen.Home && currentScreen !== AppScreen.PatientList && (
                             <Button
                                 variant="secondary"
-                                className="py-2 px-4 flex items-center"
+                                className="py-2 px-3 sm:px-4 flex items-center whitespace-nowrap"
                                 onClick={() => {
+                                    // Eğitim ekranından geri dönüş ana sayfaya gider; klinik ekranlardan danışan listesine.
                                     setSelectedPatient(null);
                                     setTargetModule(null);
-                                    setCurrentScreen(AppScreen.PatientList);
+                                    setCurrentScreen(currentScreen === AppScreen.Education ? AppScreen.Home : AppScreen.PatientList);
                                 }}
+                                aria-label={currentScreen === AppScreen.Education ? 'Ana sayfaya dön' : 'Danışan listesine dön'}
                             >
-                                <span className="mr-1">←</span> Danışan Listesi
+                                <span className="mr-1">←</span>
+                                <span className="hidden sm:inline">{currentScreen === AppScreen.Education ? 'Ana Sayfa' : 'Danışan Listesi'}</span>
+                                <span className="sm:hidden">Geri</span>
                             </Button>
                         )}
                     </div>

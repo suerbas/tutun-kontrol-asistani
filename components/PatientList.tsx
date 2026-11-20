@@ -74,8 +74,14 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
         // If ID exists, we are updating. If not, we are creating.
         const isUpdate = !!currentPatientData.id;
 
+        // Güncellemede kayıtlı halini temel al; böylece psikososyal durum,
+        // ilaç tedavisi ve Fagerström skoru form tarafından silinmez.
+        const existing = isUpdate ? patientService.getPatient(currentPatientData.id!) : undefined;
+        const base: Partial<Patient> = existing ?? {};
+
         const patientToSave: Patient = {
-            id: currentPatientData.id || patientService.createNewId(),
+            ...base,
+            id: existing?.id ?? currentPatientData.id ?? patientService.createNewId(),
             name: currentPatientData.name!,
             age: Number(currentPatientData.age),
             gender: currentPatientData.gender as Gender,
@@ -83,8 +89,8 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
             firstSmokingAge: Number(currentPatientData.firstSmokingAge),
             dailyAmount: Number(currentPatientData.dailyAmount),
             comorbidities: currentPatientData.comorbidities || [],
-            visits: currentPatientData.visits || [], // Keep existing visits if updating
-            createdAt: currentPatientData.createdAt || new Date().toISOString()
+            visits: existing?.visits ?? [],
+            createdAt: existing?.createdAt ?? new Date().toISOString()
         };
 
         patientService.savePatient(patientToSave);

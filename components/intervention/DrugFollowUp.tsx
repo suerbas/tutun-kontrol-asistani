@@ -1,5 +1,5 @@
 import React from 'react';
-import { Patient, DependenceLevel, Visit, TreatmentStatus } from '../../types';
+import { Patient, Visit, TreatmentStatus } from '../../types';
 import { PHARMACOLOGICAL_TREATMENTS } from '../../constants';
 import { patientService } from '../../services/patientService';
 import { InterventionStep } from './types';
@@ -21,12 +21,22 @@ interface DrugFollowUpProps {
     onSwitchToPsychosocial?: () => void;
 }
 
+const END_REASONS = [
+    'Tedavi tamamlandı',
+    'Tedavi bırakıldı (uyumsuz)',
+    'Yan etki nedeniyle sonlandırıldı'
+];
+
 export const DrugFollowUp: React.FC<DrugFollowUpProps> = ({
     patient, adherence, setAdherence, smokingStatus, setSmokingStatus,
     hasSideEffects, setHasSideEffects, notes, setNotes, onBack, onComplete, onSwitchToPsychosocial
 }) => {
     const treatment = patient.activeTreatment;
     const drugInfo = PHARMACOLOGICAL_TREATMENTS.find(t => t.name === treatment?.drugName);
+
+    // Tedavi sonlandırma: hekim seçimi; uyumsuzlukta otomatik olarak sonlandırılır.
+    const [endReason, setEndReason] = React.useState<string | null>(null);
+    const effectiveEnd = endReason ?? (adherence === 'none' ? END_REASONS[1] : null);
 
     const getRecommendation = () => {
         if (adherence === 'none') {
@@ -52,14 +62,22 @@ export const DrugFollowUp: React.FC<DrugFollowUpProps> = ({
         const smokingText = smokingStatus === 'clean' ? 'Sigara içmemiş' : 'Kayma yaşamış';
         const sideEffectText = hasSideEffects ? 'Yan etki var' : 'Yan etki yok';
 
+        const today = new Date().toLocaleDateString('tr-TR');
+        const endedText = effectiveEnd ? ` Tedavi sonlandırıldı: ${effectiveEnd}.` : '';
         const visit: Visit = {
             id: Date.now().toString(),
-            date: new Date().toLocaleDateString('tr-TR'),
+            date: today,
             status: adherence === 'none' ? TreatmentStatus.DropOut : TreatmentStatus.Active,
-            notes: `İlaç Takip: ${treatment?.commercialName || treatment?.drugName}. Uyum: ${adherenceText}. ${smokingText}. ${sideEffectText}. ${notes}`,
+            notes: `İlaç Takip: ${treatment?.commercialName || treatment?.drugName}. Uyum: ${adherenceText}. ${smokingText}. ${sideEffectText}. ${notes}${endedText}`,
             treatmentType: 'İlaç Takip'
         };
-        const updatedPatient = { ...patient, visits: [...patient.visits, visit] };
+        const updatedPatient: Patient = {
+            ...patient,
+            visits: [...patient.visits, visit],
+            activeTreatment: treatment && effectiveEnd
+                ? { ...treatment, isActive: false, endDate: today, endReason: effectiveEnd }
+                : treatment
+        };
         patientService.savePatient(updatedPatient);
         onComplete();
     };
@@ -152,6 +170,27 @@ export const DrugFollowUp: React.FC<DrugFollowUpProps> = ({
                         )}
                     </div>
                 )}
+
+                {/* Tedavi Durumu */}
+                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h4 className="font-bold text-slate-800 mb-2">Tedavi Durumu</h4>
+                    <p className="text-sm text-slate-600 mb-4">Tedaviye devam ediliyor mu, yoksa bu kayıtla sonlandırılacak mı?</p>
+                    <div className="grid md:grid-cols-2 gap-3">
+                        <button onClick={() => setEndReason(null)}
+                            className={`p-3 rounded-xl text-left border-2 transition-all ${effectiveEnd === null ? 'bg-teal-100 border-teal-500' : 'bg-white border-gray-200 hover:border-teal-300'}`}>
+                            <span className="font-bold text-teal-900">Tedaviye devam ediyor</span>
+                        </button>
+                        {END_REASONS.map(reason => (
+                            <button key={reason} onClick={() => setEndReason(reason)}
+                                className={`p-3 rounded-xl text-left border-2 transition-all ${effectiveEnd === reason ? 'bg-red-100 border-red-500' : 'bg-white border-gray-200 hover:border-red-300'}`}>
+                                <span className="font-bold text-slate-800">{reason}</span>
+                            </button>
+                        ))}
+                    </div>
+                    {effectiveEnd && (
+                        <p className="text-sm text-red-700 mt-3">Kayıt tamamlandığında ilaç tedavisi sonlandırılacak: <strong>{effectiveEnd}</strong>.</p>
+                    )}
+                </div>
 
                 {/* Notes */}
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">

@@ -88,6 +88,8 @@ export interface ActiveTreatment {
     startDate: string;          // Başlangıç tarihi
     dosage?: string;            // Doz bilgisi
     isActive: boolean;          // Tedavi devam ediyor mu?
+    endDate?: string;           // Tedavinin sonlandığı tarih
+    endReason?: string;         // Sonlandırma nedeni
 }
 
 export interface Visit {

@@ -53,7 +53,7 @@ export const PsychosocialInterview: React.FC<PsychosocialInterviewProps> = ({
     }
 
     return (
-        <div className="max-w-5xl mx-auto p-4 flex flex-col gap-6 min-h-[90vh] relative">
+        <div className="max-w-5xl mx-auto p-4 pb-28 flex flex-col gap-6 min-h-[90vh] relative">
             {/* Header */}
             <div className="bg-slate-800 text-white p-4 rounded-xl flex justify-between items-center shadow-md">
                 <div>
@@ -112,7 +112,7 @@ export const PsychosocialInterview: React.FC<PsychosocialInterviewProps> = ({
                                     onClick={() => onNextStep(resp.nextStep, resp.insight, resp.homework)}
                                     className={`p-4 rounded-xl text-left border-l-8 shadow-sm transition-all hover:translate-x-1 flex items-center bg-white ${resp.type === 'positive' ? 'border-green-500' : resp.type === 'negative' ? 'border-red-500' : 'border-gray-400'}`}
                                 >
-                                    <span className="font-bold text-lg text-slate-700">{resp.label}</span>
+                                    <span className="font-bold text-lg text-slate-700">{parseScript(resp.label)}</span>
                                 </button>
                             ))}
                         </div>
