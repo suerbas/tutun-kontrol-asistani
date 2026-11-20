@@ -59,7 +59,7 @@ export const PHARMACOLOGICAL_TREATMENTS: DrugInfo[] = [
     {
         name: "Nikotin Replasman Tedavisi (NRT) - Bant",
         commercialName: "Nicorette Bant",
-        dosage: "Günde >20 sigara içenlerde: 21mg/24saat. Günde <20 sigara içenlerde: 14mg/24saat ile başlanır.",
+        dosage: "Günde >10 sigara içenlerde: 21mg/24saat. Günde ≤10 sigara içenlerde: 14mg/24saat ile başlanır.",
         titration: "4 hafta tam doz (21mg veya 14mg), sonra 2 hafta orta doz (14mg), sonra 2 hafta düşük doz (7mg). Toplam 8-12 hafta.",
         duration: "8-12 hafta",
         contraindications: ["Akut miyokard enfarktüsü (son 1 ay)", "Ciddi aritmiler", "Stabil olmayan anjina", "Yaygın Cilt Hastalığı"],
@@ -108,7 +108,7 @@ export const PHARMACOLOGICAL_TREATMENTS: DrugInfo[] = [
         dosage: "150mg tablet. Sigara bırakma gününden 1-2 hafta önce başlanır.",
         titration: "İlk 3 gün: Günde 1x150mg (Sabah). 4. günden itibaren: Günde 2x150mg (En az 8 saat ara ile).\n\n⚠️ **Özel Gruplar:** Yaşlı hastalarda, böbrek veya karaciğer yetmezliği olanlarda doz artırımı yapılmaz, tedaviye günde tek doz (150mg) ile devam edilir.",
         duration: "7-12 hafta. Nüks riski yüksek hastalarda tedavi 6 aya kadar uzatılabilir.",
-        contraindications: [COMORBIDITIES.EPILEPSY, "Yeme bozukluğu (Anoreksiya/Blumia)", "MAO inhibitörü kullanımı", "Ağır kafa travması öyküsü"],
+        contraindications: [COMORBIDITIES.EPILEPSY, "Yeme bozukluğu (Anoreksiya/Blumia)", "MAO inhibitörü kullanımı", "Ağır kafa travması öyküsü", "18 yaş altı (güvenlilik ve etkinlik verisi yok; önerilmez)"],
         sideEffects: [
             {
                 effect: "Uykusuzluk (İnsomnia)",
@@ -158,7 +158,7 @@ export const PHARMACOLOGICAL_TREATMENTS: DrugInfo[] = [
         dosage: "1.5mg tablet. 25 günlük sıkıştırılmış kür.",
         titration: "1-3. gün: 2 saatte bir (6 tb/gün). \n4-12. gün: 2.5 saatte bir (5 tb). \n13-16. gün: 4 tb. \n17-20. gün: 3 tb. \n21-25. gün: 1-2 tb.",
         duration: "25 gün",
-        contraindications: ["Stabil olmayan anjina", "Yakın zamanda MI", "Gebelik/Emzirme", "Şiddetli hipertansiyon"],
+        contraindications: ["Stabil olmayan anjina", "Yakın zamanda MI", "Gebelik/Emzirme", "Şiddetli hipertansiyon", "18 yaş altı (yeterli veri yok)"],
         sideEffects: [
             {
                 effect: "Gastrointestinal Rahatsızlıklar (Mide ağrısı, bulantı)",
@@ -169,8 +169,8 @@ export const PHARMACOLOGICAL_TREATMENTS: DrugInfo[] = [
                 management: "Tansiyon takibi yapın. Araç veya makine kullanırken dikkatli olmasını söyleyin."
             },
             {
-                effect: "Nikotin Zehirlenmesi Riski",
-                management: "5. günden sonra hasta hala sigara içiyorsa ilacı kesmesini söyleyin (İlaç + Sigara nikotin toksisitesi yapabilir). Birkaç ay sonra tekrar denenebilir."
+                effect: "Tedavi sırasında sigara içmeye devam etme",
+                management: "Tedavinin 5. gününden sonra hâlâ sigara içiliyorsa ilaç kesilmelidir; ilaç ve sigara birlikte önerilmez. Bir süre sonra yeniden denenebilir."
             }
         ],
         notes: "Varenikline benzer etki mekanizması vardır. Kısa süreli ve uygun maliyetli bir seçenektir."
@@ -238,11 +238,11 @@ export const FIVE_R_DETAILS = [
         goal: 'Hastanın bırakmaktan korkma nedenlerini belirleyin ve çözüm üretin.',
         question: 'Sigarayı bırakmanızı engelleyen en büyük korkunuz veya endişeniz nedir?',
         items: [
-            { id: 'rb_1', text: 'Yoksunluk Belirtileri (Sinirlilik, İstek)', solution: 'İlaç tedavisi (NRT/Champix) bu belirtileri %70-80 oranında azaltır.' },
-            { id: 'rb_2', text: 'Kilo Alma Korkusu', solution: 'Bırakınca metabolizma biraz yavaşlar ama sağlıklı atıştırmalıklar ve yürüyüşle bu kontrol edilebilir. Sigaranın zararı 50 kilo almaya eşdeğerdir.' },
-            { id: 'rb_3', text: 'Stresle Baş Edememe', solution: 'Sigara stresi azaltmaz, sadece nikotin eksikliğini giderir. Nefes egzersizleri ve yürüyüş gerçek stresi azaltır.' },
+            { id: 'rb_1', text: 'Yoksunluk Belirtileri (Sinirlilik, İstek)', solution: 'İlaç tedavisi (NRT/Champix) yoksunluk belirtilerini hafifletir ve bırakma olasılığını belirgin biçimde artırır.' },
+            { id: 'rb_2', text: 'Kilo Alma Korkusu', solution: 'Bırakınca metabolizma biraz yavaşlar ama sağlıklı atıştırmalıklar ve yürüyüşle bu kontrol edilebilir. Kilo alımı genellikle 2-4 kg düzeyindedir.' },
+            { id: 'rb_3', text: 'Stresle Baş Edememe', solution: 'Sigara, asıl olarak nikotin eksikliğinden kaynaklanan gerginliği giderir; kalıcı bir stres yönetimi sağlamaz. Nefes egzersizleri ve yürüyüş gerçek stresi azaltır.' },
             { id: 'rb_4', text: 'Sosyal Çevre (Arkadaşlarım içiyor)', solution: 'İlk haftalarda sigara içilen ortamlardan uzak durun. Onlara bıraktığınızı söyleyin ve destek isteyin.' },
-            { id: 'rb_5', text: 'Başarısızlık Korkusu (Daha önce denedim)', solution: 'Her deneme bir tecrübedir. Çoğu kişi 3-4 denemeden sonra kalıcı bırakır. Bu sefer farklı bir yöntem (ilaç+destek) deneyeceğiz.' }
+            { id: 'rb_5', text: 'Başarısızlık Korkusu (Daha önce denedim)', solution: 'Her deneme bir tecrübedir. Bırakanların çoğu birden fazla deneme yapmıştır. Bu sefer farklı bir yöntem (ilaç+destek) deneyeceğiz.' }
         ]
     },
     {

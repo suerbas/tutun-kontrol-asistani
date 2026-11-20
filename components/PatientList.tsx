@@ -14,10 +14,8 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
 
     // Initial empty state for new patient
     const initialPatientState: Partial<Patient> = {
-        name: '',
         age: 0,
         gender: Gender.Male,
-        phone: '',
         firstSmokingAge: 18,
         dailyAmount: 20,
         comorbidities: []
@@ -44,9 +42,9 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
         setShowForm(true);
     };
 
-    const handleDelete = (e: React.MouseEvent, id: string, name: string) => {
+    const handleDelete = (e: React.MouseEvent, id: string, code: string) => {
         e.stopPropagation(); // Butona basıldığında kartın tıklanmasını engelle
-        if (window.confirm(`${name} isimli danışanı ve tüm kayıtlarını silmek istediğinize emin misiniz?`)) {
+        if (window.confirm(`${code} kodlu danışanı ve tüm kayıtlarını silmek istediğinize emin misiniz?`)) {
             patientService.deletePatient(id);
             // Optimistic update: Listeyi hemen güncelle
             setPatients(prev => prev.filter(p => p.id !== id));
@@ -74,17 +72,22 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
         // If ID exists, we are updating. If not, we are creating.
         const isUpdate = !!currentPatientData.id;
 
+        // Güncellemede kayıtlı halini temel al; böylece psikososyal durum,
+        // ilaç tedavisi ve Fagerström skoru form tarafından silinmez.
+        const existing = isUpdate ? patientService.getPatient(currentPatientData.id!) : undefined;
+        const base: Partial<Patient> = existing ?? {};
+
         const patientToSave: Patient = {
-            id: currentPatientData.id || patientService.createNewId(),
-            name: currentPatientData.name!,
+            ...base,
+            id: existing?.id ?? currentPatientData.id ?? patientService.createNewId(),
+            code: existing?.code || patientService.createCode(new Set(patientService.getAllPatients().map(p => p.code))),
             age: Number(currentPatientData.age),
             gender: currentPatientData.gender as Gender,
-            phone: currentPatientData.phone!,
             firstSmokingAge: Number(currentPatientData.firstSmokingAge),
             dailyAmount: Number(currentPatientData.dailyAmount),
             comorbidities: currentPatientData.comorbidities || [],
-            visits: currentPatientData.visits || [], // Keep existing visits if updating
-            createdAt: currentPatientData.createdAt || new Date().toISOString()
+            visits: existing?.visits ?? [],
+            createdAt: existing?.createdAt ?? new Date().toISOString()
         };
 
         patientService.savePatient(patientToSave);
@@ -103,13 +106,10 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
                 <h2 className="text-2xl font-bold mb-6 text-slate-800">
                     {currentPatientData.id ? 'Danışan Bilgilerini Düzenle' : 'Yeni Danışan Kaydı'}
                 </h2>
+                <div className="bg-amber-50 border border-amber-200 text-amber-900 rounded-lg p-3 text-sm mb-4">
+                    Bu uygulamada ad, soyad ve telefon tutulmaz. Her danışana otomatik bir kod atanır (ör. D-7K3Q); kayıtlar bu kodla izlenir.
+                </div>
                 <form onSubmit={handleSavePatient} className="space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700">Ad Soyad</label>
-                        <input required type="text" className="w-full p-2 border rounded mt-1"
-                            value={currentPatientData.name || ''}
-                            onChange={e => setCurrentPatientData({ ...currentPatientData, name: e.target.value })} />
-                    </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-700">Yaş</label>
@@ -127,13 +127,6 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
                             </select>
                         </div>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700">Telefon</label>
-                        <input type="tel" className="w-full p-2 border rounded mt-1"
-                            value={currentPatientData.phone || ''}
-                            onChange={e => setCurrentPatientData({ ...currentPatientData, phone: e.target.value })} />
-                    </div>
-
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
                         <h3 className="font-semibold mb-3 text-blue-900">Sigara Kullanım Bilgisi</h3>
                         <div className="grid grid-cols-2 gap-4">
@@ -200,7 +193,7 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
                         <div key={patient.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h3 className="font-bold text-lg text-slate-800">{patient.name}</h3>
+                                    <h3 className="font-bold text-lg text-slate-800">{patient.code}</h3>
                                     <p className="text-sm text-slate-500 mt-1">
                                         {patient.age} Yaş | {patient.gender} | Günlük: {patient.dailyAmount} dal
                                     </p>
@@ -223,7 +216,7 @@ export const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => 
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={(e) => handleDelete(e, patient.id, patient.name)}
+                                            onClick={(e) => handleDelete(e, patient.id, patient.code)}
                                             className="flex-1 px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 text-sm font-medium transition-colors"
                                         >
                                             Sil 🗑️

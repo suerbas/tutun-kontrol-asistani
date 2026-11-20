@@ -1,6 +1,6 @@
 export interface ScenarioStep {
     id: string;
-    script: string; // Hekimin okuyacağı metin. [Name] ve [Motivation] değişkenlerini içerebilir.
+    script: string; // Hekimin okuyacağı metin. [Motivation] ve [Score] değişkenlerini içerebilir.
     tip: string;    // Klinik İpucu
     type: 'dialogue' | 'input' | 'scale' | 'cbt_select';
     responses?: {
@@ -18,11 +18,58 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'FOLLOWUP_CHECK': {
         id: 'FOLLOWUP_CHECK',
         type: 'dialogue',
-        script: "Tekrar hoş geldiniz [Name] Bey/Hanım. Geçen görüşmemizde size bir 'Ödev' vermiştik. Bu süreçte kendinizi gözlemleme veya deneme şansınız oldu mu?",
+        script: "Tekrar hoş geldiniz. Geçen görüşmemizde size bir 'Ödev' vermiştik. Bu süreçte kendinizi gözlemleme veya deneme şansınız oldu mu?",
         tip: "Yargılamadan sorun. 'Yapmadım' derse kızmayın, nedenini araştırın. 'Yaptım' derse tebrik edin.",
         responses: [
             { label: "Evet, denedim/gözlemledim", nextStep: 'HOMEWORK_REVIEW_POSITIVE', type: 'positive', insight: "Ödev uyumu var." },
-            { label: "Hayır, fırsatım olmadı / Unuttum", nextStep: 'HOMEWORK_REVIEW_NEGATIVE', type: 'negative', insight: "Ödev uyumu yok." }
+            { label: "Hayır, fırsatım olmadı / Unuttum", nextStep: 'HOMEWORK_REVIEW_NEGATIVE', type: 'negative', insight: "Ödev uyumu yok." },
+            { label: "Tamamen bıraktım, içmiyorum", nextStep: 'ACTION_MAINTENANCE', type: 'positive', insight: "Bırakma başarılı, idame aşamasında." },
+            { label: "Bıraktım ama tekrar içtim", nextStep: 'RELAPSE_REVIEW', type: 'negative', insight: "Kayma veya nüks bildirildi." }
+        ]
+    },
+
+    // --- YENİ: BIRAKMIŞ HASTA (İDAME) ---
+    'ACTION_MAINTENANCE': {
+        id: 'ACTION_MAINTENANCE',
+        type: 'dialogue',
+        script: "Çok güzel. Sigarayı bıraktığınız için tebrik ederim. Bu süreçte sizi en çok destekleyen şey neydi?",
+        tip: "Başarıyı somutlaştırın ve nedenini hastanın kendi ağzından duyun. İlk 3 ay, nüks riskinin en yüksek olduğu dönemdir.",
+        responses: [
+            { label: "Ailem ve çevrem destek oldu", nextStep: 'MAINTENANCE_RISK', type: 'positive', insight: "Sosyal destek mevcut." },
+            { label: "Kendi kararım ve motivasyonum", nextStep: 'MAINTENANCE_RISK', type: 'positive', insight: "İçsel motivasyon mevcut." },
+            { label: "İlaç tedavisi yardımcı oldu", nextStep: 'MAINTENANCE_RISK', type: 'positive', insight: "Farmakolojik destek bırakmayı kolaylaştırdı." }
+        ]
+    },
+    'MAINTENANCE_RISK': {
+        id: 'MAINTENANCE_RISK',
+        type: 'dialogue',
+        script: "Bu kararlılık çok değerli. Şimdi geleceğe bakalım: Sigara isteğinin en çok geldiği durum hangisi olabilir? Böyle bir an gelirse ne yapmayı planlıyorsunuz?",
+        tip: "Nüks önleme planı yapın. Hastanın kendi tetikleyicisini adlandırmasını ve bir yanıtı (ör. 4D) önceden seçmesini sağlayın.",
+        responses: [
+            { label: "Stres / sosyal ortam olabilir", nextStep: 'CBT_TRIGGER_SELECT', type: 'neutral', insight: "Nüks riski tetikleyicileri bildirildi." },
+            { label: "Planım var, zor olmayacak", nextStep: 'CLOSING_SUCCESS', type: 'positive', homework: "Bırakma kaydını tut; istek gelince 4D tekniğini uygula." }
+        ]
+    },
+
+    // --- YENİ: KAYMA / NÜKS SONRASI ---
+    'RELAPSE_REVIEW': {
+        id: 'RELAPSE_REVIEW',
+        type: 'dialogue',
+        script: "Bırakmış olup tekrar sigaraya dönmek çok yaygın bir deneyimdir; bu bir başarısızlık değil, öğrenme fırsatıdır. Tekrar içtiğiniz an neler oldu? Ne hissettiniz?",
+        tip: "Kayma (tek sigara) ile nüksü (eski düzene dönüş) ayırt edin. Suçlamadan tetikleyiciyi bulun.",
+        responses: [
+            { label: "Tek bir sigaraydı, devam etmedim (kayma)", nextStep: 'CBT_TRIGGER_SELECT', type: 'positive', insight: "Kayma: hemen yola devam kararı." },
+            { label: "Eski düzene döndüm (nüks)", nextStep: 'RELAPSE_RESTART', type: 'negative', insight: "Nüks: tedavi stratejisi gözden geçirilmeli." }
+        ]
+    },
+    'RELAPSE_RESTART': {
+        id: 'RELAPSE_RESTART',
+        type: 'dialogue',
+        script: "Bu, bırakma yolunda yeniden denemenin zamanı geldiğini gösteriyor. Bu sefer neyin farklı olabileceğini birlikte düşünelim. Önceki denemede sizi en çok zorlayan şey neydi?",
+        tip: "Nüksü yargılamayın. Tedavi planının (ilaç, destek, tetikleyici yönetimi) gözden geçirilmesi gerektiğini hekime not edin.",
+        responses: [
+            { label: "Anlatabilirim", nextStep: 'CBT_TRIGGER_SELECT', type: 'positive', insight: "Nüks nedeni paylaşıldı." },
+            { label: "Şimdilik konuşmak istemiyorum", nextStep: 'PASSIVE_FOLLOWUP', type: 'negative', insight: "Nüks sonrası görüşme kapandı, pasif takip." }
         ]
     },
 
@@ -30,7 +77,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'FOLLOWUP_CHECK_MECHANICAL': {
         id: 'FOLLOWUP_CHECK_MECHANICAL',
         type: 'dialogue',
-        script: "Tekrar hoş geldiniz [Name] Bey/Hanım. Geçen görüşmemizde size 'Ters El Kuralı'nı (sigarayı diğer elle içme) önermiştik. Bunu uygulama şansınız oldu mu?",
+        script: "Tekrar hoş geldiniz. Geçen görüşmemizde size 'Ters El Kuralı'nı (sigarayı diğer elle içme) önermiştik. Bunu uygulama şansınız oldu mu?",
         tip: "Mekanik ödevin (ters el) takibi. Fiziksel bir eylem olduğu için 'evet/hayır' yanıtı daha nettir.",
         responses: [
             { label: "Evet, yaptım (Ters El)", nextStep: 'MECHANICAL_SUCCESS_REVIEW', type: 'positive', insight: "Mekanik ödev uygulandı." },
@@ -42,7 +89,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'FOLLOWUP_PASSIVE': {
         id: 'FOLLOWUP_PASSIVE',
         type: 'dialogue',
-        script: "Tekrar hoş geldiniz [Name]. Geçen görüşmemizde sigara konusunu bir süre rafa kaldırma ve sadece rutin kontrol yapma kararı almıştık. Bu anlaşmamıza sadık kalarak soruyorum: Nasılsınız? Hayatınızda, stres seviyenizde veya sağlığınızda önemli bir değişiklik var mı?",
+        script: "Tekrar hoş geldiniz. Geçen görüşmemizde sigara konusunu bir süre rafa kaldırma ve sadece rutin kontrol yapma kararı almıştık. Bu anlaşmamıza sadık kalarak soruyorum: Nasılsınız? Hayatınızda, stres seviyenizde veya sağlığınızda önemli bir değişiklik var mı?",
         tip: "SÖZÜNÜZDE DURUN. Sigara konusunu hasta açmadıkça açmayın. İlişkiyi ve güveni koruyun. Ödev sormayın.",
         responses: [
             { label: "İyiyim, değişiklik yok", nextStep: 'RESISTANCE_GENERAL', type: 'neutral', insight: "Hasta pasif konumda kalmayı sürdürüyor." },
@@ -133,7 +180,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_GENERAL': {
         id: 'INTRO_GENERAL',
         type: 'dialogue',
-        script: "Hoş geldiniz [Name] Bey/Hanım. Bugün buraya gelme sürecinizden biraz bahseder misiniz? Sizi buraya getiren temel düşünce neydi?",
+        script: "Hoş geldiniz. Bugün buraya gelme sürecinizden biraz bahseder misiniz? Sizi buraya getiren temel düşünce neydi?",
         tip: "Açık uçlu soruyla başlayın. Göz teması kurun ve yargılamadan dinleyin.",
         responses: [
             { label: "Kendi isteğiyle geldi (İstekli)", nextStep: 'SCALE_CHECK', type: 'positive', insight: "İçsel motivasyon mevcut." },
@@ -144,7 +191,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_PREGNANT': {
         id: 'INTRO_PREGNANT',
         type: 'dialogue',
-        script: "Hoş geldiniz [Name] Hanım. Gebeliğiniz hayırlı olsun. Bu özel süreçte sigara kullanımıyla ilgili hislerinizi duymak isterim. Çoğu anne adayı bu konuda karmaşık duygular yaşar.",
+        script: "Hoş geldiniz. Gebeliğiniz hayırlı olsun. Bu özel süreçte sigara kullanımıyla ilgili hislerinizi duymak isterim. Çoğu anne adayı bu konuda karmaşık duygular yaşar.",
         tip: "Suçluluk duygusu çok baskın olabilir. Yargılayıcı görünmekten kaçının. 'Bebek için' vurgusunu şimdilik yapmayın, önce anneyi anlayın.",
         responses: [
             { label: "Çok suçlu hissediyor / Ağlıyor", nextStep: 'PREGNANT_GUILT', type: 'neutral', insight: "Yoğun suçluluk." },
@@ -155,7 +202,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_UNDER18': {
         id: 'INTRO_UNDER18',
         type: 'dialogue',
-        script: "Selam [Name]. Buraya gelmek senin fikrin miydi, yoksa birileri mi zorladı? Dürüst olabilirsin, aramızda kalacak.",
+        script: "Selam. Buraya gelmek senin fikrin miydi, yoksa birileri mi zorladı? Dürüst olabilirsin, aramızda kalacak.",
         tip: "Otorite figürü gibi davranmayın. Bir 'rehber' veya 'abi/abla' tonu kullanın. Gizliliğe vurgu yapın.",
         responses: [
             { label: "Okul/Aile zorladı (Öfkeli)", nextStep: 'UNDER18_FREEDOM', type: 'negative', insight: "Otoriteye direnç." },
@@ -165,7 +212,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_COPD': {
         id: 'INTRO_COPD',
         type: 'dialogue',
-        script: "Geçmiş olsun [Name] Bey/Hanım. Nefes darlığınızın hayatınızı nasıl etkilediğini konuşarak başlayalım mı? Mesela torununuzla oynarken veya merdiven çıkarken neler yaşıyorsunuz?",
+        script: "Geçmiş olsun. Nefes darlığınızın hayatınızı nasıl etkilediğini konuşarak başlayalım mı? Mesela torununuzla oynarken veya merdiven çıkarken neler yaşıyorsunuz?",
         tip: "Hastalığın teknik detaylarına girmeyin. Günlük yaşam kısıtlılıklarına (Fonksiyonel kayıp) odaklanın.",
         responses: [
             { label: "Çok zorlanıyorum, korkuyorum", nextStep: 'SCALE_CHECK', type: 'positive', insight: "Hastalık algısı yüksek." },
@@ -203,7 +250,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'SCALE_PROBE': {
         id: 'SCALE_PROBE',
         type: 'dialogue',
-        script: "[Score] puan verdiniz. Peki [Name] Bey/Hanım, neden daha düşük bir puan (örneğin [Lower]) değil de [Score] verdiniz? Sizi o düşük puandan ayıran motivasyon nedir?",
+        script: "[Score] puan verdiniz. Peki, neden daha düşük bir puanı değil de [Score] puanını verdiniz? Sizi o düşük puandan ayıran motivasyon nedir?",
         tip: "BU ÇOK KRİTİK BİR SORUDUR. 'Neden daha yüksek değil?' diye sormayın, o zaman engelleri anlatır. 'Neden daha düşük değil?' diye sorarsanız, bırakma nedenlerini (Change Talk) kendisi sıralar.",
         responses: [
             { label: "Çünkü bırakmak istiyorum / Sebeplerim var", nextStep: 'CALCULATED_PATH', type: 'positive', insight: "Change Talk (Değişim konuşması) alındı." },
@@ -287,7 +334,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'PREGNANT_GUILT': {
         id: 'PREGNANT_GUILT',
         type: 'dialogue',
-        script: "Gözyaşlarınız, bebeğinizi ne kadar önemsediğinizi gösteriyor. Bu suçluluk duygusu çok ağır bir yük. Gelin bu yükü 'sorumluluğa' dönüştürelim. Her içmediğiniz sigara, bebeğinize giden oksijen miktarını artırıyor. Bunu başarmak için 'Ya hep ya hiç' demek yerine, her ertelemeyi bir zafer saysak?",
+        script: "Gözyaşlarınız, bebeğinizi ne kadar önemsediğinizi gösteriyor. Bu suçluluk duygusu çok ağır bir yük. Gelin bu yükü 'sorumluluğa' dönüştürelim. Sigara bebeğinize giden oksijeni azaltır; içilmeyen her sigara bebeğiniz için bir kazançtır. Bunu başarmak için 'Ya hep ya hiç' demek yerine, her ertelemeyi bir zafer saysak?",
         tip: "Suçluluk paralize eder (dondurur). Küçük başarıları (erteleme) kutlayarak öz yeterliliği artırın.",
         responses: [
             { label: "Deneyebilirim (Erteleme)", nextStep: 'ACTION_PLAN_SMALL', type: 'positive', homework: "İstek gelince 10dk ertele ve su iç." },
@@ -298,7 +345,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
         id: 'UNDER18_FREEDOM',
         type: 'dialogue',
         script: "Sana ne yapacağını söylemek istemiyorum. Sadece şunu merak ediyorum: Sigara şirketleri senin gibi gençleri hedef alarak milyarlar kazanıyor. Sence bir pakete bağımlı olup her gün onlara para ödemek mi özgürlük, yoksa 'Beni yönetemezsiniz' deyip bırakmak mı?",
-        tip: "Sağlık zararlarından (kanser vb.) bahsetmeyin, gençler bunu umursamaz. 'Özerklik' ve 'Manipülasyona karşı duruş' üzerinden gidin.",
+        tip: "Sağlık bilgisini yargılamadan, kısa ve somut verin (ör. sigaranın gençlerde hızla bağımlılık yaptığını ve akciğer gelişimini etkilediğini). 'Özerklik' ve 'manipülasyona karşı duruş' üzerinden de konuşun.",
         responses: [
             { label: "Hiç böyle düşünmemiştim", nextStep: 'ACTION_PLAN_SMALL', type: 'positive', homework: "Sigara şirketlerinin taktiklerini araştır." },
             { label: "Umrumda değil, seviyorum", nextStep: 'PASSIVE_FOLLOWUP', type: 'negative' } // DÜZELTİLDİ: Gençlerde Gözlem ödevi yerine tam çıkış.
@@ -381,7 +428,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'CBT_SOLUTION_STRESS': {
         id: 'CBT_SOLUTION_STRESS',
         type: 'dialogue',
-        script: "Stres anında sigara, sadece nikotin açlığını giderdiği için sizi 'kandırır'. Bunun yerine: 4 saniye nefes al, 7 saniye tut, 8 saniye ver. Bu egzersiz, beyninize sigaradan daha hızlı 'sakinleş' sinyali gönderir. Bunu deneyelim mi?",
+        script: "Stres anında sigara, sadece nikotin açlığını giderdiği için sizi 'kandırır'. Bunun yerine: 4 saniye nefes al, 7 saniye tut, 8 saniye ver. Bu egzersiz vücudu yavaşlatmaya ve gerginliği azaltmaya yardımcı olur. Bunu deneyelim mi?",
         tip: "Nefes egzersizini seansta 1 kez birlikte uygulayın.",
         responses: [
             { label: "Tamam, deneyeceğim", nextStep: 'CLOSING_SUCCESS', type: 'positive', homework: "Stres anında 4-7-8 nefes taktiği uygula." },

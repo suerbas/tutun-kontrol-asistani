@@ -3,6 +3,8 @@ import { COGNITIVE_DISTORTIONS, EMOTIONS, CBT_CLIENT_RESISTANCE, COPING_TECHNIQU
 import { ThoughtRecord, Patient } from '../types';
 import { Button } from './Button';
 import { patientService } from '../services/patientService';
+import { RoleplayPanel } from './bdt/RoleplayPanel';
+import { scrubText } from '../services/deidentify';
 
 interface CBTToolsProps {
     patient: Patient;
@@ -10,7 +12,7 @@ interface CBTToolsProps {
     onUpdatePatient: (patient: Patient) => void;
 }
 
-type TabType = 'distortions' | 'thought-record' | 'records' | 'resistance' | 'coping';
+type TabType = 'distortions' | 'thought-record' | 'records' | 'resistance' | 'coping' | 'roleplay';
 
 export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePatient }) => {
     const [activeTab, setActiveTab] = useState<TabType>('distortions');
@@ -25,7 +27,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         emotionIntensity: 5,
         cognitiveDistortion: '',
         alternativeThought: '',
-        newEmotionIntensity: 5
+        // Sonraki yoğunluk isteğe bağlıdır; kaydırılmadıysa null kalır ve kayda yazılmaz
+        newEmotionIntensity: null as number | null
     });
 
     const existingRecords = patient.psychosocialStatus?.thoughtRecords || [];
@@ -39,7 +42,12 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         const newRecord: ThoughtRecord = {
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('tr-TR'),
-            ...thoughtRecordForm
+            ...thoughtRecordForm,
+            // Kişi/yer adı, tarih ve iletişim bilgisi kayda girmeden maskelenir.
+            trigger: scrubText(thoughtRecordForm.trigger),
+            automaticThought: scrubText(thoughtRecordForm.automaticThought),
+            alternativeThought: scrubText(thoughtRecordForm.alternativeThought),
+            newEmotionIntensity: thoughtRecordForm.newEmotionIntensity ?? undefined
         };
 
         const updatedPatient: Patient = {
@@ -60,7 +68,7 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
             emotionIntensity: 5,
             cognitiveDistortion: '',
             alternativeThought: '',
-            newEmotionIntensity: 5
+            newEmotionIntensity: null
         });
         setActiveTab('records');
     };
@@ -73,7 +81,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         { id: 'resistance' as TabType, label: '🛡️ Direnç Rehberi', shortLabel: '🛡️ Direnç', count: CBT_CLIENT_RESISTANCE.length },
         { id: 'coping' as TabType, label: '🧘 Baş Etme', shortLabel: '🧘 Baş Etme', count: COPING_TECHNIQUES.length },
         { id: 'thought-record' as TabType, label: '✏️ Düşünce Kaydı', shortLabel: '✏️ Kayıt', count: null },
-        { id: 'records' as TabType, label: '📋 Kayıtlar', shortLabel: '📋 Kayıtlar', count: existingRecords.length }
+        { id: 'records' as TabType, label: '📋 Kayıtlar', shortLabel: '📋 Kayıtlar', count: existingRecords.length },
+        { id: 'roleplay' as TabType, label: '🎭 Rol Oyunu', shortLabel: '🎭 Rol Oyunu', count: null }
     ];
 
     return (
@@ -356,6 +365,9 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                             ) : (
                                 <div className="space-y-5">
                                     <h3 className="font-bold text-lg text-gray-800 border-b pb-2">Yeni Düşünce Kaydı</h3>
+                                    <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded p-2">
+                                        Kişi ve yer adları, tarihler, tam yaş ve iletişim bilgileri kaydedilirken otomatik maskelenir (ör. [İSİM]). Yine de kimlik belirten ayrıntı yazmayın.
+                                    </p>
 
                                     {/* Tetikleyici */}
                                     <div>
@@ -451,13 +463,13 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                                     {/* Yeni Duygu Yoğunluğu */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            6. Yeni Duygu Yoğunluğu: {thoughtRecordForm.newEmotionIntensity}/10
+                                            6. Sonraki Duygu Yoğunluğu (isteğe bağlı): {thoughtRecordForm.newEmotionIntensity === null ? 'Ölçülmedi, kaydırarak ölçün' : `${thoughtRecordForm.newEmotionIntensity}/10`}
                                         </label>
                                         <input
                                             type="range"
                                             min="1"
                                             max="10"
-                                            value={thoughtRecordForm.newEmotionIntensity}
+                                            value={thoughtRecordForm.newEmotionIntensity ?? 5}
                                             onChange={(e) => setThoughtRecordForm({ ...thoughtRecordForm, newEmotionIntensity: parseInt(e.target.value) })}
                                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
                                         />
@@ -475,6 +487,9 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                             )}
                         </div>
                     )}
+
+                    {/* Rol Oyunu Tab */}
+                    {activeTab === 'roleplay' && <RoleplayPanel />}
 
                     {/* Kayıtlar Tab */}
                     {activeTab === 'records' && (

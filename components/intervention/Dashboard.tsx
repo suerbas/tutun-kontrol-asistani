@@ -45,9 +45,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="bg-white p-6 rounded-xl shadow-sm max-w-5xl mx-auto">
             <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">{patient.name.charAt(0)}</div>
+                    <div className="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg">{patient.code.charAt(0)}</div>
                     <div>
-                        <h2 className="text-2xl font-bold text-slate-800">{patient.name}</h2>
+                        <h2 className="text-2xl font-bold text-slate-800">{patient.code}</h2>
                         <p className="text-sm text-slate-500">Hasta Paneli & Tedavi Yönetimi</p>
                     </div>
                 </div>
