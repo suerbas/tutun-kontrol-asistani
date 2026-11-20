@@ -3,6 +3,7 @@ import { COGNITIVE_DISTORTIONS, EMOTIONS, CBT_CLIENT_RESISTANCE, COPING_TECHNIQU
 import { ThoughtRecord, Patient } from '../types';
 import { Button } from './Button';
 import { patientService } from '../services/patientService';
+import { RoleplayPanel } from './bdt/RoleplayPanel';
 
 interface CBTToolsProps {
     patient: Patient;
@@ -10,7 +11,7 @@ interface CBTToolsProps {
     onUpdatePatient: (patient: Patient) => void;
 }
 
-type TabType = 'distortions' | 'thought-record' | 'records' | 'resistance' | 'coping';
+type TabType = 'distortions' | 'thought-record' | 'records' | 'resistance' | 'coping' | 'roleplay';
 
 export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePatient }) => {
     const [activeTab, setActiveTab] = useState<TabType>('distortions');
@@ -75,7 +76,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         { id: 'resistance' as TabType, label: '🛡️ Direnç Rehberi', shortLabel: '🛡️ Direnç', count: CBT_CLIENT_RESISTANCE.length },
         { id: 'coping' as TabType, label: '🧘 Baş Etme', shortLabel: '🧘 Baş Etme', count: COPING_TECHNIQUES.length },
         { id: 'thought-record' as TabType, label: '✏️ Düşünce Kaydı', shortLabel: '✏️ Kayıt', count: null },
-        { id: 'records' as TabType, label: '📋 Kayıtlar', shortLabel: '📋 Kayıtlar', count: existingRecords.length }
+        { id: 'records' as TabType, label: '📋 Kayıtlar', shortLabel: '📋 Kayıtlar', count: existingRecords.length },
+        { id: 'roleplay' as TabType, label: '🎭 Rol Oyunu', shortLabel: '🎭 Rol Oyunu', count: null }
     ];
 
     return (
@@ -477,6 +479,9 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                             )}
                         </div>
                     )}
+
+                    {/* Rol Oyunu Tab */}
+                    {activeTab === 'roleplay' && <RoleplayPanel />}
 
                     {/* Kayıtlar Tab */}
                     {activeTab === 'records' && (
