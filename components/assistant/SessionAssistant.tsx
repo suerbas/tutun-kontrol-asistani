@@ -4,7 +4,8 @@ import { ASSISTANT_TASKS, AssistantTask } from '../../constants/assistant';
 import { buildAssistantContext, contextToText, hasMasks, MASK_PATTERN, scrubText } from '../../services/deidentify';
 import { Button } from '../Button';
 
-type Item = { id: number; task: AssistantTask; input: string; answer?: string; error?: string };
+type Guard = { retried: boolean; removedLines: number; notes: string[] };
+type Item = { id: number; task: AssistantTask; input: string; answer?: string; guard?: Guard; error?: string };
 
 const MAX_INPUT = 1500;
 
@@ -43,7 +44,7 @@ const Answer: React.FC<{ text: string }> = ({ text }) => (
     </div>
 );
 
-const callAssistant = async (body: object): Promise<string> => {
+const callAssistant = async (body: object): Promise<{ text: string; guard?: Guard }> => {
     const res = await fetch('/api/assistant', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,7 +52,27 @@ const callAssistant = async (body: object): Promise<string> => {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'İstek başarısız oldu.');
-    return data.text as string;
+    return { text: data.text as string, guard: data.guard };
+};
+
+/** Sunucudaki kural denetiminin sonucunu hekime gösterir. */
+const GuardNote: React.FC<{ guard?: Guard }> = ({ guard }) => {
+    if (!guard) return null;
+    if (guard.notes.length) {
+        return (
+            <div className="mt-2 text-xs bg-amber-50 border border-amber-200 text-amber-900 rounded p-2">
+                <strong>Kural denetimi:</strong> {guard.removedLines > 0 ? `${guard.removedLines} satır çıkarıldı. ` : ''}Bu cevabı dikkatle değerlendirin.
+                <ul className="list-disc pl-4 mt-1">
+                    {guard.notes.map((n, i) => <li key={i}>{n}</li>)}
+                </ul>
+            </div>
+        );
+    }
+    return (
+        <div className="mt-2 text-[11px] text-emerald-700">
+            ✓ Kural denetiminden geçti{guard.retried ? ' (ilk cevap kurallara uymadığı için yeniden yazdırıldı)' : ''}.
+        </div>
+    );
 };
 
 export const SessionAssistant: React.FC<{ patient: Patient }> = ({ patient }) => {
@@ -105,8 +126,8 @@ export const SessionAssistant: React.FC<{ patient: Patient }> = ({ patient }) =>
         setDraft('');
         setBusy(true);
         try {
-            const answer = await callAssistant({ task, input, context, history });
-            setItems(prev => prev.map(i => i.id === id ? { ...i, answer } : i));
+            const { text: answer, guard } = await callAssistant({ task, input, context, history });
+            setItems(prev => prev.map(i => i.id === id ? { ...i, answer, guard } : i));
         } catch (err: any) {
             setItems(prev => prev.map(i => i.id === id ? { ...i, error: err.message } : i));
         } finally {
@@ -178,6 +199,7 @@ export const SessionAssistant: React.FC<{ patient: Patient }> = ({ patient }) =>
                                         {item.answer && (
                                             <div className="mr-4 bg-gray-50 border rounded-2xl px-3 py-2">
                                                 <Answer text={item.answer} />
+                                                <GuardNote guard={item.guard} />
                                                 <button onClick={() => copy(item)} className="mt-2 text-xs text-indigo-700 font-semibold hover:underline">
                                                     {copied === item.id ? 'Kopyalandı ✓' : 'Kopyala'}
                                                 </button>

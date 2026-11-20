@@ -36,6 +36,7 @@ export const checkDrugSafety = (patient: Patient, drugName: string): SafetyCheck
 
         case DRUG_BUPROPION:
             if (has(COMORBIDITIES.EPILEPSY)) blocking.push('Epilepsi / nöbet öyküsünde Bupropion kontrendikedir.');
+            if (patient.age < 18) blocking.push('18 yaş altında Bupropion önerilmez (güvenlilik ve etkinlik verisi yok).');
             if (pregnant) warnings.push('Gebelikte Bupropion kullanımı hekim değerlendirmesi gerektirir.');
             break;
 

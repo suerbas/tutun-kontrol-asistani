@@ -108,7 +108,7 @@ export const PHARMACOLOGICAL_TREATMENTS: DrugInfo[] = [
         dosage: "150mg tablet. Sigara bırakma gününden 1-2 hafta önce başlanır.",
         titration: "İlk 3 gün: Günde 1x150mg (Sabah). 4. günden itibaren: Günde 2x150mg (En az 8 saat ara ile).\n\n⚠️ **Özel Gruplar:** Yaşlı hastalarda, böbrek veya karaciğer yetmezliği olanlarda doz artırımı yapılmaz, tedaviye günde tek doz (150mg) ile devam edilir.",
         duration: "7-12 hafta. Nüks riski yüksek hastalarda tedavi 6 aya kadar uzatılabilir.",
-        contraindications: [COMORBIDITIES.EPILEPSY, "Yeme bozukluğu (Anoreksiya/Blumia)", "MAO inhibitörü kullanımı", "Ağır kafa travması öyküsü"],
+        contraindications: [COMORBIDITIES.EPILEPSY, "Yeme bozukluğu (Anoreksiya/Blumia)", "MAO inhibitörü kullanımı", "Ağır kafa travması öyküsü", "18 yaş altı (güvenlilik ve etkinlik verisi yok; önerilmez)"],
         sideEffects: [
             {
                 effect: "Uykusuzluk (İnsomnia)",

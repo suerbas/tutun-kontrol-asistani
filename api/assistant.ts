@@ -1,8 +1,11 @@
 // Görüşme asistanı için sunucu tarafı vekil (proxy). Model sağlayıcısı: OpenRouter.
 // Gizlilik: istemciden gelen bağlam izin listesine göre yeniden süzülür ve tüm serbest
 // metinler sunucuda yeniden maskelenir. İçerik kaydedilmez.
+// Güvenilirlik: model uygulamanın ilaç kartlarıyla beslenir; cevap kurallara göre denetlenir,
+// ihlalde bir kez düzeltme istenir, yine ihlal varsa ihlalli satırlar çıkarılır.
 import { ASSISTANT_SYSTEM_PROMPT, ASSISTANT_TASK_PROMPTS, ASSISTANT_TASKS, type AssistantTask } from '../constants/assistant';
 import { contextToText, sanitizeContext, scrubText } from '../services/deidentify';
+import { buildKnowledgeBlock, correctionPrompt, deriveSituation, drugStatuses, stripViolations, validateAnswer } from '../services/assistantGuard';
 import { callOpenRouter, json, readBody, type ChatMessage } from './_lib/openrouter';
 
 const MAX_INPUT = 1500;
@@ -43,8 +46,15 @@ export default async function handler(req: any, res: any) {
             text: scrubText(h.text.slice(0, MAX_HISTORY_CHARS), h.role === 'user' ? 'full' : 'storage')
         }));
 
+    // Doğrulanmış ilaç bilgisi ve bu danışan için uygulamanın güvenlik kontrolü (hekim notundaki durumlar dahil)
+    const situation = deriveSituation(context, input);
+    const statuses = drugStatuses(situation);
+
     const messages: ChatMessage[] = [
-        { role: 'system', content: `${ASSISTANT_SYSTEM_PROMPT}\n\nAnonim danışan özeti:\n${contextToText(context)}` },
+        {
+            role: 'system',
+            content: `${ASSISTANT_SYSTEM_PROMPT}\n\nAnonim danışan özeti:\n${contextToText(context)}\n\n${buildKnowledgeBlock(statuses, situation.notes)}`
+        },
         ...history.map(h => ({ role: h.role, content: h.text }) as ChatMessage),
         {
             role: 'user',
@@ -52,7 +62,41 @@ export default async function handler(req: any, res: any) {
         }
     ];
 
-    const result = await callOpenRouter(messages, { maxTokens: 700, temperature: 0.4, title: 'Gorusme Asistani' });
-    if (result.ok === false) return json(res, result.status, { error: result.error });
-    return json(res, 200, { text: result.text, sentInput: input });
+    const opts = { maxTokens: 900, temperature: 0.2, title: 'Gorusme Asistani' };
+    const first = await callOpenRouter(messages, opts);
+    if (first.ok === false) return json(res, first.status, { error: first.error });
+
+    let text = first.text;
+    let violations = validateAnswer(text, { task, statuses, finishReason: first.finishReason });
+    const guard: GuardReport = { retried: false, removedLines: 0, notes: [] };
+
+    // İhlal varsa model bir kez, ihlaller söylenerek yeniden yazdırılır.
+    if (violations.length) {
+        guard.retried = true;
+        const second = await callOpenRouter(
+            [...messages, { role: 'assistant', content: text }, { role: 'user', content: correctionPrompt(violations) }],
+            opts
+        );
+        if (second.ok) {
+            const secondViolations = validateAnswer(second.text, { task, statuses, finishReason: second.finishReason });
+            // Daha az ihlalli cevap tutulur.
+            if (secondViolations.length <= violations.length) {
+                text = second.text;
+                violations = secondViolations;
+            }
+        }
+    }
+
+    // Hâlâ ihlal varsa ihlalli satırlar çıkarılır ve hekime bildirilir.
+    if (violations.length) {
+        const stripped = stripViolations(text, violations);
+        text = stripped.text;
+        guard.removedLines = stripped.removed;
+        guard.notes = violations.map(v => v.message);
+        if (!text.trim()) return json(res, 502, { error: 'Cevap güvenlik denetiminden geçemedi. Soruyu farklı biçimde sorun.' });
+    }
+
+    return json(res, 200, { text, sentInput: input, guard });
 }
+
+type GuardReport = { retried: boolean; removedLines: number; notes: string[] };

@@ -37,7 +37,7 @@ export const readBody = (req: any, maxBytes: number): Promise<any> => {
 
 export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string };
 
-export type ChatResult = { ok: true; text: string } | { ok: false; status: number; error: string };
+export type ChatResult = { ok: true; text: string; finishReason?: string } | { ok: false; status: number; error: string };
 
 /** OpenRouter sohbet tamamlama isteği. Hata metinleri kullanıcıya gösterilecek biçimdedir. */
 export const callOpenRouter = async (
@@ -81,5 +81,5 @@ export const callOpenRouter = async (
     const data: any = await upstream.json().catch(() => null);
     const text = String(data?.choices?.[0]?.message?.content ?? '').trim();
     if (!text) return { ok: false, status: 502, error: 'Boş yanıt alındı.' };
-    return { ok: true, text };
+    return { ok: true, text, finishReason: data?.choices?.[0]?.finish_reason ?? undefined };
 };

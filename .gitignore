@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Yapay zekâ değerlendirme çıktıları (model cevapları)
+eval-assistant-sonuc*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
