@@ -25,7 +25,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         emotionIntensity: 5,
         cognitiveDistortion: '',
         alternativeThought: '',
-        newEmotionIntensity: 5
+        // Sonraki yoğunluk isteğe bağlıdır; kaydırılmadıysa null kalır ve kayda yazılmaz
+        newEmotionIntensity: null as number | null
     });
 
     const existingRecords = patient.psychosocialStatus?.thoughtRecords || [];
@@ -39,7 +40,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         const newRecord: ThoughtRecord = {
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('tr-TR'),
-            ...thoughtRecordForm
+            ...thoughtRecordForm,
+            newEmotionIntensity: thoughtRecordForm.newEmotionIntensity ?? undefined
         };
 
         const updatedPatient: Patient = {
@@ -60,7 +62,7 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
             emotionIntensity: 5,
             cognitiveDistortion: '',
             alternativeThought: '',
-            newEmotionIntensity: 5
+            newEmotionIntensity: null
         });
         setActiveTab('records');
     };
@@ -451,13 +453,13 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                                     {/* Yeni Duygu Yoğunluğu */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                                            6. Yeni Duygu Yoğunluğu: {thoughtRecordForm.newEmotionIntensity}/10
+                                            6. Sonraki Duygu Yoğunluğu (isteğe bağlı): {thoughtRecordForm.newEmotionIntensity === null ? 'Ölçülmedi, kaydırarak ölçün' : `${thoughtRecordForm.newEmotionIntensity}/10`}
                                         </label>
                                         <input
                                             type="range"
                                             min="1"
                                             max="10"
-                                            value={thoughtRecordForm.newEmotionIntensity}
+                                            value={thoughtRecordForm.newEmotionIntensity ?? 5}
                                             onChange={(e) => setThoughtRecordForm({ ...thoughtRecordForm, newEmotionIntensity: parseInt(e.target.value) })}
                                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
                                         />

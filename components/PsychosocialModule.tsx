@@ -209,6 +209,8 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
             if (stepId.includes('CBT_SOLUTION_COFFEE')) pastTriggers.add('Kahve');
             if (stepId.includes('CBT_SOLUTION_MEAL')) pastTriggers.add('Yemek Sonrası');
             if (stepId.includes('CBT_SOLUTION_SOCIAL')) pastTriggers.add('Sosyal Ortam');
+            if (stepId.includes('CBT_SOLUTION_BOREDOM')) pastTriggers.add('Can Sıkıntısı');
+            if (stepId.includes('CBT_SOLUTION_DRIVE')) pastTriggers.add('Araba Kullanırken');
         });
 
         // Evre Türkçeye çevir
@@ -241,7 +243,9 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
             lastScore: currentScore ?? patient.psychosocialStatus?.lastScore,
             homework: finalHomework,
             sessionCount: (patient.psychosocialStatus?.sessionCount || 0) + 1,
-            isQuitting: false
+            isQuitting: false,
+            // BDT düşünce kayıtları seans kaydıyla silinmesin
+            thoughtRecords: patient.psychosocialStatus?.thoughtRecords
         };
 
         const visit: Visit = {
