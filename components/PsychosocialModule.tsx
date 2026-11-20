@@ -38,7 +38,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
     );
 
     const [sessionState, setSessionState] = useState<SessionState>({
-        patientName: patient.name,
+        patientName: patient.code,
         profile: initialProfile,
         motivation: patient.psychosocialStatus?.motivation || '',
         currentStepId: '',

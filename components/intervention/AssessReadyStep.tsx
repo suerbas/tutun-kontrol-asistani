@@ -29,10 +29,10 @@ export const AssessReadyStep: React.FC<AssessReadyStepProps> = ({
     };
 
     const getDoctorAdvice = (s: number) => {
-        if (s <= 2) return `Sayın ${patient.name}, bağımlılık düzeyiniz henüz başlangıç seviyesinde. Bu büyük bir avantaj. Fiziksel yoksunluk yaşamadan, sadece alışkanlıklarınızı değiştirerek sigaradan kurtulmanız mümkün.`;
-        if (s <= 5) return `Sayın ${patient.name}, test sonuçlarınız orta düzeyde bir fiziksel bağımlılığa işaret ediyor. Sigarayı bırakma sürecinde zorlanmanız beklenen bir durumdur, ancak bu zorluğu tek başınıza aşmak zorunda değilsiniz. Tıbbi tedavi desteği ile yoksunluk belirtilerini en aza indirerek, bu süreci çok daha rahat yönetebiliriz.`;
-        if (s <= 7) return `Sayın ${patient.name}, vücudunuz nikotine biyolojik olarak alışmış durumda. Kendi kendinize bırakmaya çalışmak sizi gereksiz yere yorabilir. Tıbbi tedavi desteğiyle bu süreci yönetmemiz sağlığınız için en doğrusudur.`;
-        return `Sayın ${patient.name}, test sonucunuz çok yüksek düzeyde fiziksel bağımlılık gösteriyor. Profesyonel ilaç tedavisi olmadan bırakmayı denemek çok zordur. Lütfen size yardım etmeme izin verin.`;
+        if (s <= 2) return `Sayın danışan, bağımlılık düzeyiniz henüz başlangıç seviyesinde. Bu büyük bir avantaj. Fiziksel yoksunluk yaşamadan, sadece alışkanlıklarınızı değiştirerek sigaradan kurtulmanız mümkün.`;
+        if (s <= 5) return `Sayın danışan, test sonuçlarınız orta düzeyde bir fiziksel bağımlılığa işaret ediyor. Sigarayı bırakma sürecinde zorlanmanız beklenen bir durumdur, ancak bu zorluğu tek başınıza aşmak zorunda değilsiniz. Tıbbi tedavi desteği ile yoksunluk belirtilerini en aza indirerek, bu süreci çok daha rahat yönetebiliriz.`;
+        if (s <= 7) return `Sayın danışan, vücudunuz nikotine biyolojik olarak alışmış durumda. Kendi kendinize bırakmaya çalışmak sizi gereksiz yere yorabilir. Tıbbi tedavi desteğiyle bu süreci yönetmemiz sağlığınız için en doğrusudur.`;
+        return `Sayın danışan, test sonucunuz çok yüksek düzeyde fiziksel bağımlılık gösteriyor. Profesyonel ilaç tedavisi olmadan bırakmayı denemek çok zordur. Lütfen size yardım etmeme izin verin.`;
     };
 
     const scoreColor = score <= 2 ? 'green' : score <= 7 ? 'yellow' : 'red';

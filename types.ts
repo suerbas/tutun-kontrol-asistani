@@ -106,10 +106,9 @@ export interface Visit {
 
 export interface Patient {
     id: string;
-    name: string;
+    code: string;               // Anonim danışan kodu (ör. D-7K3Q). Ad, soyad ve telefon tutulmaz.
     age: number;
     gender: Gender;
-    phone: string;
     firstSmokingAge: number;
     dailyAmount: number;
     comorbidities: string[];

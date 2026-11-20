@@ -19,7 +19,7 @@ export const AskStep: React.FC<AskStepProps> = ({ patient, isReady, onBack, onPr
                     <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
                         <h3 className="font-bold text-blue-900">Hasta Profili</h3>
                         <ul className="mt-2 space-y-2 text-sm text-slate-700">
-                            <li><strong>Ad Soyad:</strong> {patient.name} ({patient.age}y, {patient.gender})</li>
+                            <li><strong>Danışan kodu:</strong> {patient.code} ({patient.age}y, {patient.gender})</li>
                             <li><strong>Günlük İçim:</strong> {patient.dailyAmount} adet</li>
                             <li><strong>Başlama Yaşı:</strong> {patient.firstSmokingAge}</li>
                             <li><strong>Komorbiditeler:</strong> {patient.comorbidities.join(', ') || 'Yok'}</li>

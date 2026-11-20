@@ -1,6 +1,6 @@
 export interface ScenarioStep {
     id: string;
-    script: string; // Hekimin okuyacağı metin. [Name] ve [Motivation] değişkenlerini içerebilir.
+    script: string; // Hekimin okuyacağı metin. [Motivation] ve [Score] değişkenlerini içerebilir.
     tip: string;    // Klinik İpucu
     type: 'dialogue' | 'input' | 'scale' | 'cbt_select';
     responses?: {
@@ -18,7 +18,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'FOLLOWUP_CHECK': {
         id: 'FOLLOWUP_CHECK',
         type: 'dialogue',
-        script: "Tekrar hoş geldiniz [Name] Bey/Hanım. Geçen görüşmemizde size bir 'Ödev' vermiştik. Bu süreçte kendinizi gözlemleme veya deneme şansınız oldu mu?",
+        script: "Tekrar hoş geldiniz. Geçen görüşmemizde size bir 'Ödev' vermiştik. Bu süreçte kendinizi gözlemleme veya deneme şansınız oldu mu?",
         tip: "Yargılamadan sorun. 'Yapmadım' derse kızmayın, nedenini araştırın. 'Yaptım' derse tebrik edin.",
         responses: [
             { label: "Evet, denedim/gözlemledim", nextStep: 'HOMEWORK_REVIEW_POSITIVE', type: 'positive', insight: "Ödev uyumu var." },
@@ -32,7 +32,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'ACTION_MAINTENANCE': {
         id: 'ACTION_MAINTENANCE',
         type: 'dialogue',
-        script: "Çok güzel, [Name] Bey/Hanım. Sigarayı bıraktığınız için tebrik ederim. Bu süreçte sizi en çok destekleyen şey neydi?",
+        script: "Çok güzel. Sigarayı bıraktığınız için tebrik ederim. Bu süreçte sizi en çok destekleyen şey neydi?",
         tip: "Başarıyı somutlaştırın ve nedenini hastanın kendi ağzından duyun. İlk 3 ay, nüks riskinin en yüksek olduğu dönemdir.",
         responses: [
             { label: "Ailem ve çevrem destek oldu", nextStep: 'MAINTENANCE_RISK', type: 'positive', insight: "Sosyal destek mevcut." },
@@ -77,7 +77,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'FOLLOWUP_CHECK_MECHANICAL': {
         id: 'FOLLOWUP_CHECK_MECHANICAL',
         type: 'dialogue',
-        script: "Tekrar hoş geldiniz [Name] Bey/Hanım. Geçen görüşmemizde size 'Ters El Kuralı'nı (sigarayı diğer elle içme) önermiştik. Bunu uygulama şansınız oldu mu?",
+        script: "Tekrar hoş geldiniz. Geçen görüşmemizde size 'Ters El Kuralı'nı (sigarayı diğer elle içme) önermiştik. Bunu uygulama şansınız oldu mu?",
         tip: "Mekanik ödevin (ters el) takibi. Fiziksel bir eylem olduğu için 'evet/hayır' yanıtı daha nettir.",
         responses: [
             { label: "Evet, yaptım (Ters El)", nextStep: 'MECHANICAL_SUCCESS_REVIEW', type: 'positive', insight: "Mekanik ödev uygulandı." },
@@ -89,7 +89,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'FOLLOWUP_PASSIVE': {
         id: 'FOLLOWUP_PASSIVE',
         type: 'dialogue',
-        script: "Tekrar hoş geldiniz [Name]. Geçen görüşmemizde sigara konusunu bir süre rafa kaldırma ve sadece rutin kontrol yapma kararı almıştık. Bu anlaşmamıza sadık kalarak soruyorum: Nasılsınız? Hayatınızda, stres seviyenizde veya sağlığınızda önemli bir değişiklik var mı?",
+        script: "Tekrar hoş geldiniz. Geçen görüşmemizde sigara konusunu bir süre rafa kaldırma ve sadece rutin kontrol yapma kararı almıştık. Bu anlaşmamıza sadık kalarak soruyorum: Nasılsınız? Hayatınızda, stres seviyenizde veya sağlığınızda önemli bir değişiklik var mı?",
         tip: "SÖZÜNÜZDE DURUN. Sigara konusunu hasta açmadıkça açmayın. İlişkiyi ve güveni koruyun. Ödev sormayın.",
         responses: [
             { label: "İyiyim, değişiklik yok", nextStep: 'RESISTANCE_GENERAL', type: 'neutral', insight: "Hasta pasif konumda kalmayı sürdürüyor." },
@@ -180,7 +180,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_GENERAL': {
         id: 'INTRO_GENERAL',
         type: 'dialogue',
-        script: "Hoş geldiniz [Name] Bey/Hanım. Bugün buraya gelme sürecinizden biraz bahseder misiniz? Sizi buraya getiren temel düşünce neydi?",
+        script: "Hoş geldiniz. Bugün buraya gelme sürecinizden biraz bahseder misiniz? Sizi buraya getiren temel düşünce neydi?",
         tip: "Açık uçlu soruyla başlayın. Göz teması kurun ve yargılamadan dinleyin.",
         responses: [
             { label: "Kendi isteğiyle geldi (İstekli)", nextStep: 'SCALE_CHECK', type: 'positive', insight: "İçsel motivasyon mevcut." },
@@ -191,7 +191,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_PREGNANT': {
         id: 'INTRO_PREGNANT',
         type: 'dialogue',
-        script: "Hoş geldiniz [Name] Hanım. Gebeliğiniz hayırlı olsun. Bu özel süreçte sigara kullanımıyla ilgili hislerinizi duymak isterim. Çoğu anne adayı bu konuda karmaşık duygular yaşar.",
+        script: "Hoş geldiniz. Gebeliğiniz hayırlı olsun. Bu özel süreçte sigara kullanımıyla ilgili hislerinizi duymak isterim. Çoğu anne adayı bu konuda karmaşık duygular yaşar.",
         tip: "Suçluluk duygusu çok baskın olabilir. Yargılayıcı görünmekten kaçının. 'Bebek için' vurgusunu şimdilik yapmayın, önce anneyi anlayın.",
         responses: [
             { label: "Çok suçlu hissediyor / Ağlıyor", nextStep: 'PREGNANT_GUILT', type: 'neutral', insight: "Yoğun suçluluk." },
@@ -202,7 +202,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_UNDER18': {
         id: 'INTRO_UNDER18',
         type: 'dialogue',
-        script: "Selam [Name]. Buraya gelmek senin fikrin miydi, yoksa birileri mi zorladı? Dürüst olabilirsin, aramızda kalacak.",
+        script: "Selam. Buraya gelmek senin fikrin miydi, yoksa birileri mi zorladı? Dürüst olabilirsin, aramızda kalacak.",
         tip: "Otorite figürü gibi davranmayın. Bir 'rehber' veya 'abi/abla' tonu kullanın. Gizliliğe vurgu yapın.",
         responses: [
             { label: "Okul/Aile zorladı (Öfkeli)", nextStep: 'UNDER18_FREEDOM', type: 'negative', insight: "Otoriteye direnç." },
@@ -212,7 +212,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'INTRO_COPD': {
         id: 'INTRO_COPD',
         type: 'dialogue',
-        script: "Geçmiş olsun [Name] Bey/Hanım. Nefes darlığınızın hayatınızı nasıl etkilediğini konuşarak başlayalım mı? Mesela torununuzla oynarken veya merdiven çıkarken neler yaşıyorsunuz?",
+        script: "Geçmiş olsun. Nefes darlığınızın hayatınızı nasıl etkilediğini konuşarak başlayalım mı? Mesela torununuzla oynarken veya merdiven çıkarken neler yaşıyorsunuz?",
         tip: "Hastalığın teknik detaylarına girmeyin. Günlük yaşam kısıtlılıklarına (Fonksiyonel kayıp) odaklanın.",
         responses: [
             { label: "Çok zorlanıyorum, korkuyorum", nextStep: 'SCALE_CHECK', type: 'positive', insight: "Hastalık algısı yüksek." },
@@ -250,7 +250,7 @@ export const PSYCHOSOCIAL_SCENARIOS: Record<string, ScenarioStep> = {
     'SCALE_PROBE': {
         id: 'SCALE_PROBE',
         type: 'dialogue',
-        script: "[Score] puan verdiniz. Peki [Name] Bey/Hanım, neden daha düşük bir puanı değil de [Score] puanını verdiniz? Sizi o düşük puandan ayıran motivasyon nedir?",
+        script: "[Score] puan verdiniz. Peki, neden daha düşük bir puanı değil de [Score] puanını verdiniz? Sizi o düşük puandan ayıran motivasyon nedir?",
         tip: "BU ÇOK KRİTİK BİR SORUDUR. 'Neden daha yüksek değil?' diye sormayın, o zaman engelleri anlatır. 'Neden daha düşük değil?' diye sorarsanız, bırakma nedenlerini (Change Talk) kendisi sıralar.",
         responses: [
             { label: "Çünkü bırakmak istiyorum / Sebeplerim var", nextStep: 'CALCULATED_PATH', type: 'positive', insight: "Change Talk (Değişim konuşması) alındı." },

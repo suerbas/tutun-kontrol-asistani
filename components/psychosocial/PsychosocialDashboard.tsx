@@ -30,7 +30,7 @@ export const PsychosocialDashboard: React.FC<PsychosocialDashboardProps> = ({
                 <div className="bg-purple-600 p-8 text-white">
                     <div className="flex justify-between items-start">
                         <div>
-                            <h2 className="text-3xl font-bold mb-1">{patient.name}</h2>
+                            <h2 className="text-3xl font-bold mb-1">{patient.code}</h2>
                             <p className="opacity-90">{status.profile} | {status.sessionCount}. Seans Tamamlandı</p>
                         </div>
                         <div className="text-right">
