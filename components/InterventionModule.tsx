@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Patient, Visit, DependenceLevel, TreatmentStatus } from '../types';
 import { BEHAVIORAL_GUIDE, PHARMACOLOGICAL_TREATMENTS, FIVE_R_DETAILS } from '../constants';
 import { patientService } from '../services/patientService';
+import { scrubText } from '../services/deidentify';
 import { BEHAVIORAL_ONLY, isDrugBlocked } from './intervention/safety';
 
 // Alt bileşenler
@@ -122,7 +123,7 @@ export const InterventionModule: React.FC<InterventionProps> = ({ patient, onBac
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('tr-TR'),
             status: isReady ? TreatmentStatus.Active : TreatmentStatus.New,
-            notes: `${fagerstromNote}${isReady ? 'Bırakmaya hazır.' : 'Hazır değil (5R uygulandı).'} ${behavioralNotes} ${fiveRNotes}Tedavi: ${selectedTreatment}. Notlar: ${notes}`,
+            notes: `${fagerstromNote}${isReady ? 'Bırakmaya hazır.' : 'Hazır değil (5R uygulandı).'} ${behavioralNotes} ${fiveRNotes}Tedavi: ${selectedTreatment}. Notlar: ${scrubText(notes)}`,
             treatmentType: selectedTreatment
         };
         const today = new Date().toLocaleDateString('tr-TR');

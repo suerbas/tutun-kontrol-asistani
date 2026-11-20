@@ -2,6 +2,7 @@ import React from 'react';
 import { Patient, Visit, TreatmentStatus } from '../../types';
 import { PHARMACOLOGICAL_TREATMENTS } from '../../constants';
 import { patientService } from '../../services/patientService';
+import { scrubText } from '../../services/deidentify';
 import { InterventionStep } from './types';
 import { Wrapper } from './Wrapper';
 import { Button } from '../Button';
@@ -68,7 +69,7 @@ export const DrugFollowUp: React.FC<DrugFollowUpProps> = ({
             id: Date.now().toString(),
             date: today,
             status: adherence === 'none' ? TreatmentStatus.DropOut : TreatmentStatus.Active,
-            notes: `İlaç Takip: ${treatment?.commercialName || treatment?.drugName}. Uyum: ${adherenceText}. ${smokingText}. ${sideEffectText}. ${notes}${endedText}`,
+            notes: `İlaç Takip: ${treatment?.commercialName || treatment?.drugName}. Uyum: ${adherenceText}. ${smokingText}. ${sideEffectText}. ${scrubText(notes)}${endedText}`,
             treatmentType: 'İlaç Takip'
         };
         const updatedPatient: Patient = {
@@ -196,6 +197,7 @@ export const DrugFollowUp: React.FC<DrugFollowUpProps> = ({
                 <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
                     <label className="block font-bold text-slate-700 mb-2">Kontrol Notu:</label>
                     <textarea className="w-full border rounded-lg p-3 h-24 text-sm" placeholder="Yan etkiler, uyum durumu, öneriler..." value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
+                    <p className="text-xs text-gray-500 mt-1">Kişi/yer adları, tarih ve iletişim bilgileri kaydedilirken maskelenir.</p>
                 </div>
 
                 <div className="flex justify-between pt-4 border-t">

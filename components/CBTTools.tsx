@@ -4,6 +4,7 @@ import { ThoughtRecord, Patient } from '../types';
 import { Button } from './Button';
 import { patientService } from '../services/patientService';
 import { RoleplayPanel } from './bdt/RoleplayPanel';
+import { scrubText } from '../services/deidentify';
 
 interface CBTToolsProps {
     patient: Patient;
@@ -42,6 +43,10 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
             id: Date.now().toString(),
             date: new Date().toLocaleDateString('tr-TR'),
             ...thoughtRecordForm,
+            // Kişi/yer adı, tarih ve iletişim bilgisi kayda girmeden maskelenir.
+            trigger: scrubText(thoughtRecordForm.trigger),
+            automaticThought: scrubText(thoughtRecordForm.automaticThought),
+            alternativeThought: scrubText(thoughtRecordForm.alternativeThought),
             newEmotionIntensity: thoughtRecordForm.newEmotionIntensity ?? undefined
         };
 
@@ -360,6 +365,9 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                             ) : (
                                 <div className="space-y-5">
                                     <h3 className="font-bold text-lg text-gray-800 border-b pb-2">Yeni Düşünce Kaydı</h3>
+                                    <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded p-2">
+                                        Kişi ve yer adları, tarihler, tam yaş ve iletişim bilgileri kaydedilirken otomatik maskelenir (ör. [İSİM]). Yine de kimlik belirten ayrıntı yazmayın.
+                                    </p>
 
                                     {/* Tetikleyici */}
                                     <div>

@@ -232,6 +232,7 @@ export const AssistMedStep: React.FC<AssistMedStepProps> = ({
                     <div>
                         <label className="block font-bold text-slate-700 mb-2 text-sm">Klinik Notlar:</label>
                         <textarea className="w-full border rounded p-2 h-20 text-sm" placeholder="Özel notlar..." value={notes} onChange={(e) => onSetNotes(e.target.value)}></textarea>
+                        <p className="text-xs text-gray-500 mt-1">Kişi/yer adları, tarih ve iletişim bilgileri kaydedilirken maskelenir.</p>
                     </div>
                 </div>
                 <div className="md:col-span-7">

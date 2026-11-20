@@ -7,6 +7,7 @@ import { InterventionModule } from './components/InterventionModule';
 import { PsychosocialModule } from './components/PsychosocialModule';
 import { AppScreen, Patient } from './types';
 import { Button } from './components/Button';
+import { SessionAssistant } from './components/assistant/SessionAssistant';
 
 // Font size levels with numeric scale
 const FONT_SIZE_LEVELS = [0.8, 0.9, 1, 1.1, 1.25, 1.4, 1.6];
@@ -228,6 +229,9 @@ const App: React.FC = () => {
                 </div>
             </header>
             <main>{renderScreen()}</main>
+            {selectedPatient && (currentScreen === AppScreen.Intervention || currentScreen === AppScreen.Psychosocial) && (
+                <SessionAssistant patient={selectedPatient} />
+            )}
         </div>
     );
 };

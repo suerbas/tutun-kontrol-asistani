@@ -1,13 +1,30 @@
 import { Patient, Visit } from '../types';
+import { scrubText } from './deidentify';
 
 const STORAGE_KEY = 'tütün_kontrol_hastalar';
 // Karıştırılabilen karakterler (0/O, 1/I) kodlardan çıkarıldı.
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 
-// Doğrudan tanımlayıcılar (ad, soyad, telefon) kayda yazılmaz.
+// Doğrudan tanımlayıcılar (ad, soyad, telefon) kayda yazılmaz. Serbest metinlerdeki
+// iletişim bilgisi, kimlik no, adres ve kişi adları da maskelenir.
 const anonymize = (raw: any): Patient => {
     const { name, phone, ...rest } = raw;
-    return rest as Patient;
+    const p = rest as Patient;
+    const visits = Array.isArray(p.visits)
+        ? p.visits.map(v => ({ ...v, notes: scrubText(v.notes || '', 'storage') }))
+        : [];
+    const status = p.psychosocialStatus
+        ? {
+            ...p.psychosocialStatus,
+            thoughtRecords: p.psychosocialStatus.thoughtRecords?.map(r => ({
+                ...r,
+                trigger: scrubText(r.trigger || '', 'storage'),
+                automaticThought: scrubText(r.automaticThought || '', 'storage'),
+                alternativeThought: scrubText(r.alternativeThought || '', 'storage')
+            }))
+        }
+        : undefined;
+    return { ...p, visits, ...(status ? { psychosocialStatus: status } : {}) };
 };
 
 const readRaw = (): any[] => {
@@ -29,19 +46,17 @@ export const patientService = {
     getAllPatients: (): Patient[] => {
         const raw = readRaw();
         const used = new Set<string>(raw.map(p => p.code).filter(Boolean));
-        let changed = false;
-
         const patients = raw.map(p => {
             let code: string = typeof p.code === 'string' ? p.code : '';
             if (!code) {
                 code = patientService.createCode(used);
                 used.add(code);
             }
-            if ('name' in p || 'phone' in p || code !== p.code) changed = true;
             return { ...anonymize(p), code } as Patient;
         });
 
-        if (changed) localStorage.setItem(STORAGE_KEY, JSON.stringify(patients));
+        const serialized = JSON.stringify(patients);
+        if (serialized !== JSON.stringify(raw)) localStorage.setItem(STORAGE_KEY, serialized);
         return patients;
     },
 
