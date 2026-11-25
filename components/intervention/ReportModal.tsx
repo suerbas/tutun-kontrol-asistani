@@ -13,7 +13,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ patient, onClose }) =>
             <div className="bg-slate-800 p-6 flex justify-between items-center text-white">
                 <div>
                     <h3 className="font-bold text-xl">Psikososyal Durum Raporu</h3>
-                    <p className="text-slate-300 text-xs mt-1">{patient.name} | {patient.psychosocialStatus?.profile}</p>
+                    <p className="text-slate-300 text-xs mt-1">{patient.code} | {patient.psychosocialStatus?.profile}</p>
                 </div>
                 <button onClick={onClose} className="text-white hover:text-red-300 text-2xl font-bold transition-colors">×</button>
             </div>

@@ -38,7 +38,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
     );
 
     const [sessionState, setSessionState] = useState<SessionState>({
-        patientName: patient.name,
+        patientName: patient.code,
         profile: initialProfile,
         motivation: patient.psychosocialStatus?.motivation || '',
         currentStepId: '',
@@ -191,7 +191,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
         const pastHomeworks: string[] = [];
         patient.visits.forEach(v => {
             if (v.notes.includes('Tetikleyiciler:')) {
-                const match = v.notes.match(/Tetikleyiciler: (.*?)\./);
+                const match = v.notes.match(/Tetikleyiciler: ([^|.]*)/);
                 if (match && match[1]) {
                     match[1].split(',').forEach(t => pastTriggers.add(t.trim()));
                 }
@@ -209,6 +209,8 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
             if (stepId.includes('CBT_SOLUTION_COFFEE')) pastTriggers.add('Kahve');
             if (stepId.includes('CBT_SOLUTION_MEAL')) pastTriggers.add('Yemek Sonrası');
             if (stepId.includes('CBT_SOLUTION_SOCIAL')) pastTriggers.add('Sosyal Ortam');
+            if (stepId.includes('CBT_SOLUTION_BOREDOM')) pastTriggers.add('Can Sıkıntısı');
+            if (stepId.includes('CBT_SOLUTION_DRIVE')) pastTriggers.add('Araba Kullanırken');
         });
 
         // Evre Türkçeye çevir
@@ -229,7 +231,7 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
         // Kısa ve öz visit notu
         let visitNote = `Seans #${(patient.psychosocialStatus?.sessionCount || 0) + 1}`;
         visitNote += ` | Evre: ${progressText}`;
-        if (currentScore !== null) visitNote += ` | Skor: ${currentScore}/10`;
+        if (currentScore !== undefined) visitNote += ` | Skor: ${currentScore}/10`;
         visitNote += ` | ${mainNotes}`;
         if (triggersText) visitNote += ` | Tetikleyiciler: ${triggersText}`;
         if (finalHomework && finalHomework !== 'Yok') visitNote += ` | Ödev: ${finalHomework}`;
@@ -241,7 +243,9 @@ export const PsychosocialModule: React.FC<PsychosocialProps> = ({ patient, onBac
             lastScore: currentScore ?? patient.psychosocialStatus?.lastScore,
             homework: finalHomework,
             sessionCount: (patient.psychosocialStatus?.sessionCount || 0) + 1,
-            isQuitting: false
+            isQuitting: false,
+            // BDT düşünce kayıtları seans kaydıyla silinmesin
+            thoughtRecords: patient.psychosocialStatus?.thoughtRecords
         };
 
         const visit: Visit = {

@@ -41,7 +41,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
                             <div className="text-teal-200 text-sm">Teknikleri</div>
                         </div>
                         <div className="glass rounded-xl px-5 py-3 text-white">
-                            <div className="text-2xl font-bold">8+</div>
+                            <div className="text-2xl font-bold">5</div>
                             <div className="text-teal-200 text-sm">İlaç Protokolü</div>
                         </div>
                     </div>
@@ -137,7 +137,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onNavigate }) => {
                 {/* Footer Info */}
                 <div className="mt-12 text-center space-y-2">
                     <p className="text-slate-500 text-sm">
-                        🏥 Sağlık Bakanlığı rehberleri ve güncel kanıta dayalı uygulamalar referans alınarak hazırlanmıştır.
+                        🏥 Kanıta dayalı uygulamalar (MPOWER, 5A/5R modelleri) referans alınarak hazırlanmıştır. Klinik kararlar hekim sorumluluğundadır.
                     </p>
                     <p className="text-slate-400 text-xs">
                         💻 En iyi deneyim için bilgisayar ekranında görüntülemeniz önerilir.
