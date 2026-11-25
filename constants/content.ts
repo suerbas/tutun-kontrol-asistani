@@ -1,4 +1,4 @@
-import { DrugInfo, COMORBIDITIES, SpecialProfile } from '../types';
+import { DrugInfo, COMORBIDITIES, SpecialProfile } from '../types.js';
 
 // --- BİLİŞSEL ÇARPITMALAR (COGNITIVE DISTORTIONS) - ZENGİNLEŞTİRİLMİŞ ---
 export const COGNITIVE_DISTORTIONS = [

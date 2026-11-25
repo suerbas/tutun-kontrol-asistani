@@ -2,13 +2,13 @@
 // 1) Modele uygulamanın doğrulanmış ilaç kartlarını ve bu danışan için güvenlik kontrolü sonucunu verir.
 // 2) Model cevabını kurallara göre denetler (doz, kontrendikasyon, istatistik, kaynak, kurum, uydurma süre...).
 // 3) Düzeltilemeyen cevapta ihlalli satırları çıkarır.
-import { PHARMACOLOGICAL_TREATMENTS } from '../constants/clinical';
-import type { AssistantTask } from '../constants/assistant';
-import { COMORBIDITIES, Gender, Patient } from '../types';
+import { PHARMACOLOGICAL_TREATMENTS } from '../constants/clinical.js';
+import type { AssistantTask } from '../constants/assistant.js';
+import { COMORBIDITIES, Gender, Patient } from '../types.js';
 import {
     checkDrugSafety, DRUG_BUPROPION, DRUG_NRT_BANT, DRUG_NRT_SAKIZ, DRUG_SITIZIN, DRUG_VARENIKLIN
-} from '../components/intervention/safety';
-import type { AssistantContext } from './deidentify';
+} from '../components/intervention/safety.js';
+import type { AssistantContext } from './deidentify.js';
 
 // Kartlardaki ilaçların metinde geçebilecek adları
 const DRUG_ALIASES: Record<string, RegExp> = {

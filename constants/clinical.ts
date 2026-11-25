@@ -1,4 +1,4 @@
-import { DrugInfo, COMORBIDITIES } from '../types';
+import { DrugInfo, COMORBIDITIES } from '../types.js';
 
 export const FAGERSTROM_QUESTIONS = [
     {

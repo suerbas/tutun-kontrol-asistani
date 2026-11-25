@@ -2,10 +2,10 @@
 // Hem tarayıcıda (kayıt ve önizleme) hem sunucuda (LLM'e gitmeden önce ikinci kontrol)
 // aynı kurallar çalışır. Amaç: doğrudan tanımlayıcıları ve dolaylı tanımlayıcıları
 // (ad, yer, iletişim, tarih, tam yaş) metinden çıkarmak.
-import { COMORBIDITIES, Gender, Patient, SpecialProfile } from '../types';
-import { COGNITIVE_DISTORTIONS, EMOTIONS, MOTIVATION_CATEGORIES } from '../constants/content';
-import { PHARMACOLOGICAL_TREATMENTS } from '../constants/clinical';
-import { PSYCHOSOCIAL_SCENARIOS } from '../constants/scenarios';
+import { COMORBIDITIES, Gender, Patient, SpecialProfile } from '../types.js';
+import { COGNITIVE_DISTORTIONS, EMOTIONS, MOTIVATION_CATEGORIES } from '../constants/content.js';
+import { PHARMACOLOGICAL_TREATMENTS } from '../constants/clinical.js';
+import { PSYCHOSOCIAL_SCENARIOS } from '../constants/scenarios.js';
 
 export const MASK = {
     NAME: '[İSİM]',

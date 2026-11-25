@@ -1,8 +1,8 @@
 // BDT rol oyunu için sunucu tarafı vekil (proxy). Model sağlayıcısı: OpenRouter.
 // API anahtarı yalnızca sunucuda okunur ve tarayıcıya gönderilmez.
 // Konuşma içeriği kaydedilmez; yalnızca yanıtı üretmek için iletilir.
-import { ROLEPLAY_COACH_PROMPT, ROLEPLAY_PERSONAS } from '../constants/roleplay';
-import { callOpenRouter, json, readBody, type ChatMessage } from './_lib/openrouter';
+import { ROLEPLAY_COACH_PROMPT, ROLEPLAY_PERSONAS } from '../constants/roleplay.js';
+import { callOpenRouter, json, readBody, type ChatMessage } from './_lib/openrouter.js';
 
 const MAX_MESSAGES = 40;
 const MAX_CHARS = 800;

@@ -3,10 +3,10 @@
 // metinler sunucuda yeniden maskelenir. İçerik kaydedilmez.
 // Güvenilirlik: model uygulamanın ilaç kartlarıyla beslenir; cevap kurallara göre denetlenir,
 // ihlalde bir kez düzeltme istenir, yine ihlal varsa ihlalli satırlar çıkarılır.
-import { ASSISTANT_SYSTEM_PROMPT, ASSISTANT_TASK_PROMPTS, ASSISTANT_TASKS, type AssistantTask } from '../constants/assistant';
-import { contextToText, sanitizeContext, scrubText } from '../services/deidentify';
-import { buildKnowledgeBlock, correctionPrompt, deriveSituation, drugStatuses, stripViolations, validateAnswer } from '../services/assistantGuard';
-import { callOpenRouter, json, readBody, type ChatMessage } from './_lib/openrouter';
+import { ASSISTANT_SYSTEM_PROMPT, ASSISTANT_TASK_PROMPTS, ASSISTANT_TASKS, type AssistantTask } from '../constants/assistant.js';
+import { contextToText, sanitizeContext, scrubText } from '../services/deidentify.js';
+import { buildKnowledgeBlock, correctionPrompt, deriveSituation, drugStatuses, stripViolations, validateAnswer } from '../services/assistantGuard.js';
+import { callOpenRouter, json, readBody, type ChatMessage } from './_lib/openrouter.js';
 
 const MAX_INPUT = 1500;
 const MAX_HISTORY = 8;

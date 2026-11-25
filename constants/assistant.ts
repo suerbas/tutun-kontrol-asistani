@@ -1,6 +1,6 @@
 // Görüşme asistanı: görüşme sırasında hekime anlık destek.
 // Danışana değil hekime yazar. Danışan bilgisi yalnızca anonim özet olarak gelir.
-import { COGNITIVE_DISTORTIONS } from './content';
+import { COGNITIVE_DISTORTIONS } from './content.js';
 
 export type AssistantTask = 'mi' | 'distortion' | 'next' | 'ask';
 

@@ -1,4 +1,4 @@
-import { Patient, COMORBIDITIES } from '../../types';
+import { Patient, COMORBIDITIES } from '../../types.js';
 
 // İlaç adları constants/clinical.ts ile birebir aynı olmalıdır.
 export const DRUG_NRT_BANT = 'Nikotin Replasman Tedavisi (NRT) - Bant';
