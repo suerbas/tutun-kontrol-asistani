@@ -120,7 +120,7 @@ export const buildKnowledgeBlock = (statuses: DrugStatus[], sitNotes: string[]):
 // --------------------------------------------------------------------------
 
 export interface Violation {
-    code: 'truncated' | 'length' | 'sections' | 'dose' | 'blocked' | 'stats' | 'citation' | 'org' | 'crisisLine' | 'invented' | 'prescribe';
+    code: 'truncated' | 'length' | 'sections' | 'dose' | 'blocked' | 'stats' | 'citation' | 'org' | 'crisisLine' | 'invented' | 'prescribe' | 'script';
     message: string;
     /** Bu ihlali içeren satırlar (son çare olarak çıkarılır) */
     lines: string[];
@@ -149,7 +149,18 @@ const INVENTED = /(?<![\p{L}\d])\d+\s*(?:yıl|yıllık|yıldır|yıldan|senedir|
 const PRESCRIBE = /reçetele|reçete(?:yi|ni|sini)?\s+yaz(?!ma)|reçete\s+edin/iu;
 const HEADER_LINE = /^\s*(?:#+\s*)?\*\*[^*]+\*\*\s*:?\s*$|^\s*#+\s+/u;
 
-const splitSentences = (line: string) => line.split(/(?<=[.!?])\s+/u);
+// Model bazen Türkçe kelimelerin içine Kiril vb. harf karıştırıyor ("çökер"). Latin dışı her harf yakalanır.
+const NON_LATIN = /(?=\p{L})\P{Script=Latin}/u;
+// Latin harflere birebir benzeyen Kiril/Yunan harfleri (son çare düzeltmesi için).
+const HOMOGLYPHS: Record<string, string> = {
+    'а': 'a', 'е': 'e', 'о': 'o', 'р': 'r', 'с': 'c', 'х': 'x', 'у': 'y', 'к': 'k', 'м': 'm', 'т': 't', 'і': 'i', 'ј': 'j', 'ѕ': 's', 'һ': 'h', 'ԁ': 'd', 'ո': 'n',
+    'А': 'A', 'В': 'B', 'Е': 'E', 'К': 'K', 'М': 'M', 'Н': 'H', 'О': 'O', 'Р': 'P', 'С': 'C', 'Т': 'T', 'Х': 'X', 'У': 'Y', 'І': 'I', 'Ј': 'J', 'Ѕ': 'S',
+    'α': 'a', 'ο': 'o', 'ρ': 'p', 'ν': 'v', 'Α': 'A', 'Β': 'B', 'Ε': 'E', 'Η': 'H', 'Ι': 'I', 'Κ': 'K', 'Μ': 'M', 'Ν': 'N', 'Ο': 'O', 'Ρ': 'P', 'Τ': 'T', 'Χ': 'X', 'Υ': 'Y', 'Ζ': 'Z'
+};
+/** Latin harfe benzeyen yabancı harfleri Latin karşılığına çevirir; diğerlerine dokunmaz. */
+export const fixMixedScript = (text: string) => text.replace(/(?=\p{L})\P{Script=Latin}/gu, ch => HOMOGLYPHS[ch] ?? ch);
+
+const splitSentences =(line: string) => line.split(/(?<=[.!?])\s+/u);
 // Türkçe büyük İ/I harfleri /i bayrağıyla doğru eşleşmez; küçük harfe çevirip öyle aranır.
 const low = (s: string) => s.toLocaleLowerCase('tr-TR');
 
@@ -200,6 +211,8 @@ export const validateAnswer = (text: string, opts: ValidateOptions): Violation[]
     if (aloMisuse.length) add('crisisLine', 'ALO 171 yalnızca danışanların arayabileceği sigara bırakma danışma hattıdır; hekime kılavuz desteği veya özel protokol sunduğunu yazma.', aloMisuse);
     const invented = lines.filter(l => INVENTED.test(l));
     if (invented.length) add('invented', 'Özette olmayan süre/yıl bilgisi eklendi.', invented);
+    const foreign = lines.filter(l => NON_LATIN.test(l));
+    if (foreign.length) add('script', 'Türkçe kelimelerin içinde Latin alfabesi dışı (ör. Kiril) harf kullanıldı; yalnızca Türkçe Latin harfleriyle yaz.', foreign);
     const presc = lines.filter(l => PRESCRIBE.test(l));
     if (presc.length) add('prescribe', 'Reçete talimatı verildi; ilaç kararı hekimdedir.', presc);
 
@@ -224,6 +237,22 @@ export const correctionPrompt = (violations: Violation[]) =>
  * Yapısal ihlaller (eksik bölüm, uzunluk) çıkarılamaz; yalnızca not düşülür.
  */
 export const stripViolations = (text: string, violations: Violation[]): { text: string; removed: number } => {
+    // Karışık alfabe satır silmeden düzeltilir: benzer harfler Latin'e çevrilir.
+    // Yalnızca düzeltmeden sonra hâlâ Latin dışı harf kalan satırlar silinir.
+    const scriptLines = new Set(violations.filter(v => v.code === 'script').flatMap(v => v.lines));
+    if (scriptLines.size) {
+        const fixed = new Map<string, string>();
+        text = text.split('\n').map(l => {
+            if (!scriptLines.has(l)) return l;
+            const f = fixMixedScript(l);
+            fixed.set(l, f);
+            return f;
+        }).join('\n');
+        violations = violations.map(v => {
+            const lines = v.lines.map(l => fixed.get(l) ?? l);
+            return { ...v, lines: v.code === 'script' ? lines.filter(l => NON_LATIN.test(l)) : lines };
+        });
+    }
     const bad = new Set(violations.flatMap(v => v.lines));
     let lines = text.split('\n').filter(l => !bad.has(l) || !l.trim());
     const removed = text.split('\n').length - lines.length;

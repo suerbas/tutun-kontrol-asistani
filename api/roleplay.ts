@@ -3,6 +3,7 @@
 // Konuşma içeriği kaydedilmez; yalnızca yanıtı üretmek için iletilir.
 import { ROLEPLAY_COACH_PROMPT, ROLEPLAY_PERSONAS } from '../constants/roleplay.js';
 import { callOpenRouter, json, readBody, type ChatMessage } from './_lib/openrouter.js';
+import { fixMixedScript } from '../services/assistantGuard.js';
 
 const MAX_MESSAGES = 40;
 const MAX_CHARS = 800;
@@ -70,5 +71,6 @@ export default async function handler(req: any, res: any) {
     );
 
     if (result.ok === false) return json(res, result.status, { error: result.error });
-    return json(res, 200, { text: result.text });
+    // Modelin Türkçe kelimelere karıştırdığı Kiril/Yunan benzer harfler Latin'e çevrilir.
+    return json(res, 200, { text: fixMixedScript(result.text) });
 }
