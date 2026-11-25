@@ -160,8 +160,11 @@ const App: React.FC = () => {
     const currentScale = FONT_SIZE_LEVELS[fontLevel];
     const scalePercent = Math.round(currentScale * 100);
 
+    const showAssistant = !!selectedPatient && (currentScreen === AppScreen.Intervention || currentScreen === AppScreen.Psychosocial);
+
     return (
-        <div className="min-h-screen bg-gray-50 pb-12">
+        // Asistan düğmesi sabit (fixed) durduğu için alta boşluk bırakılır; sayfanın son öğesi düğmenin üstüne kaydırılabilir.
+        <div className={`min-h-screen bg-gray-50 ${showAssistant ? 'pb-32' : 'pb-12'}`}>
             <header className="sticky top-0 z-50 bg-white shadow-md border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                     {/* Logo and Title - Clickable to go home */}
@@ -229,7 +232,7 @@ const App: React.FC = () => {
                 </div>
             </header>
             <main>{renderScreen()}</main>
-            {selectedPatient && (currentScreen === AppScreen.Intervention || currentScreen === AppScreen.Psychosocial) && (
+            {showAssistant && (
                 <SessionAssistant patient={selectedPatient} />
             )}
         </div>

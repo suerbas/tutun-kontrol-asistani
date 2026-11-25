@@ -22,7 +22,7 @@ export enum SpecialProfile {
     General = 'Genel Yetişkin',
     Under18 = '18 Yaş Altı / Ergen',
     Pregnant = 'Gebe',
-    COPD = 'KOAH / Kronik Patient'
+    COPD = 'KOAH / Kronik Akciğer Hastası'
 }
 
 export const COMORBIDITIES = {

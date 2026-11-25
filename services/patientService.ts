@@ -1,5 +1,7 @@
-import { Patient, Visit } from '../types';
+import { Patient, SpecialProfile, Visit } from '../types';
 import { scrubText } from './deidentify';
+
+const LEGACY_COPD_PROFILE = 'KOAH / Kronik Patient';
 
 const STORAGE_KEY = 'tütün_kontrol_hastalar';
 // Karıştırılabilen karakterler (0/O, 1/I) kodlardan çıkarıldı.
@@ -16,6 +18,10 @@ const anonymize = (raw: any): Patient => {
     const status = p.psychosocialStatus
         ? {
             ...p.psychosocialStatus,
+            // Eski sürümdeki profil adı ("KOAH / Kronik Patient") yenisine çevrilir.
+            profile: (p.psychosocialStatus.profile as string) === LEGACY_COPD_PROFILE
+                ? SpecialProfile.COPD
+                : p.psychosocialStatus.profile,
             thoughtRecords: p.psychosocialStatus.thoughtRecords?.map(r => ({
                 ...r,
                 trigger: scrubText(r.trigger || '', 'storage'),
