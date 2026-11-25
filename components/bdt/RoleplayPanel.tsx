@@ -145,7 +145,15 @@ export const RoleplayPanel: React.FC = () => {
                     value={draft}
                     disabled={busy}
                     onChange={e => setDraft(e.target.value)}
+                    onKeyDown={e => {
+                        // Enter gönderir, Shift+Enter yeni satır açar.
+                        if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                            e.preventDefault();
+                            if (!busy && draft.trim()) send();
+                        }
+                    }}
                 />
+                <p className="text-[11px] text-gray-500 -mt-1">Enter: gönder · Shift+Enter: yeni satır</p>
                 <div className="flex flex-wrap gap-3 justify-between items-center">
                     <Button variant="outline" onClick={requestFeedback} disabled={!canFeedback}>
                         Geri bildirim al

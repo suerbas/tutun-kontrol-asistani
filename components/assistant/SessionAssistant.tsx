@@ -238,7 +238,11 @@ export const SessionAssistant: React.FC<{ patient: Patient }> = ({ patient }) =>
                                 disabled={busy}
                                 onChange={e => setDraft(e.target.value)}
                                 onKeyDown={e => {
-                                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); }
+                                    // Enter gönderir, Shift+Enter yeni satır açar (Türkçe klavyede harf birleştirme sırasında gönderilmez).
+                                    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                                        e.preventDefault();
+                                        if (canSend) send();
+                                    }
                                 }}
                             />
                             {willMask && (
@@ -247,7 +251,7 @@ export const SessionAssistant: React.FC<{ patient: Patient }> = ({ patient }) =>
                                 </div>
                             )}
                             <div className="flex items-center justify-between gap-2">
-                                <span className="text-[11px] text-gray-500">Öneriler klinik kararın yerini tutmaz.</span>
+                                <span className="text-[11px] text-gray-500">Enter: gönder · Shift+Enter: yeni satır. Öneriler klinik kararın yerini tutmaz.</span>
                                 <div className="flex gap-2">
                                     {items.length > 0 && (
                                         <Button variant="secondary" onClick={() => setItems([])} disabled={busy} className="py-1.5 px-3 text-sm">Temizle</Button>

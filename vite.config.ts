@@ -29,7 +29,7 @@ const devApi = (): Plugin => ({
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     // Sunucu tarafı işleyici process.env üzerinden okur; anahtarlar istemci koduna gömülmez.
-    for (const key of ['OPENROUTER_API_KEY', 'OPENROUTER_MODEL', 'OPENROUTER_BASE_URL', 'OPENROUTER_DATA_COLLECTION']) {
+    for (const key of ['OPENROUTER_API_KEY', 'OPENROUTER_MODEL', 'OPENROUTER_BASE_URL', 'OPENROUTER_DATA_COLLECTION', 'OPENROUTER_REASONING']) {
         if (env[key]) process.env[key] = env[key];
     }
 

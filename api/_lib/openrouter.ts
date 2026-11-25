@@ -59,6 +59,11 @@ export const callOpenRouter = async (
     if (process.env.OPENROUTER_DATA_COLLECTION === 'deny') {
         body.provider = { data_collection: 'deny' };
     }
+    // İsteğe bağlı: modelin cevap öncesi "düşünmesini" kapatır. Düşünme token'ları max_tokens'ı tüketip
+    // cevabı yarıda bırakabiliyor; kısa cevaplarda kapatmak daha hızlı ve ucuz.
+    if (process.env.OPENROUTER_REASONING === 'off') {
+        body.reasoning = { enabled: false };
+    }
 
     const upstream = await fetch(`${process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1'}/chat/completions`, {
         method: 'POST',
