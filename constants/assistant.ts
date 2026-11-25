@@ -69,7 +69,7 @@ KESİN KURALLAR (her cevap otomatik denetlenir; ihlal eden cevap reddedilir):
 
 export const ASSISTANT_TASK_PROMPTS: Record<AssistantTask, string> = {
     mi: `Görev: Danışanın aşağıdaki ifadesine motivasyonel görüşmeye uygun yanıt öner.
-1. **Ne duyuyorum:** Değişim konuşması mı, sürdürme konuşması mı, direnç mi? Tek cümle.
+1. **Ne duyuyorum:** Değişim konuşması mı, sürdürme konuşması mı, yoksa danışan ile hekim arasında uyumsuzluk (ilişkide gerilim) mi? Tek cümle. Sürdürme konuşmasını "direnç" diye adlandırma; kararsızlığın doğal bir parçasıdır. "Direnç" kelimesini hiç kullanma.
 2. **Yanıt önerileri:** Üç seçenek: basit yansıtma, karmaşık (çift taraflı) yansıtma, açık uçlu soru. Her biri tek cümle ve tırnak içinde.
 3. **Kaçının:** Bu noktada söylenmemesi gereken bir cümle örneği ve nedeni.`,
     distortion: `Görev: Danışanın aşağıdaki otomatik düşüncesini BDT açısından incele.

@@ -72,5 +72,17 @@ export default async function handler(req: any, res: any) {
 
     if (result.ok === false) return json(res, result.status, { error: result.error });
     // Modelin Türkçe kelimelere karıştırdığı Kiril/Yunan benzer harfler Latin'e çevrilir.
-    return json(res, 200, { text: fixMixedScript(result.text) });
+    const text = fixMixedScript(result.text);
+    return json(res, 200, { text: isFeedback ? text : stripStageDirections(text) });
 }
+
+/** Danışan cevabındaki "*koltuğunda kıpırdanarak*" gibi sahne tariflerini çıkarır; geriye söz kalmazsa metne dokunmaz. */
+const stripStageDirections =(text: string) => {
+    const cleaned = text
+        .replace(/(?<!\*)\*(?!\*)[^*\n]{1,160}\*(?!\*)/g, ' ')
+        .replace(/[ \t]{2,}/g, ' ')
+        .replace(/ +([.,!?…])/g, '$1')
+        .split('\n').map(l => l.trim()).join('\n')
+        .trim();
+    return cleaned.length >= 2 ? cleaned : text;
+};

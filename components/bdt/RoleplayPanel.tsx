@@ -4,6 +4,17 @@ import { Button } from '../Button';
 
 type Turn = { role: 'clinician' | 'client'; text: string };
 
+/** Model metnindeki **kalın** ve *italik* işaretlerini yıldız göstermeden biçimlendirir. */
+const Formatted: React.FC<{ text: string }> = ({ text }) => (
+    <>
+        {text.split(/(\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g).map((part, i) =>
+            part.startsWith('**') && part.endsWith('**') && part.length > 4 ? <strong key={i}>{part.slice(2, -2)}</strong>
+                : part.startsWith('*') && part.endsWith('*') && part.length > 2 ? <em key={i} className="opacity-75">{part.slice(1, -1)}</em>
+                    : <React.Fragment key={i}>{part}</React.Fragment>
+        )}
+    </>
+);
+
 const callRoleplayApi = async (body: object): Promise<string> => {
     const res = await fetch('/api/roleplay', {
         method: 'POST',
@@ -126,7 +137,7 @@ export const RoleplayPanel: React.FC = () => {
                     <div key={i} className={`flex ${t.role === 'clinician' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm whitespace-pre-wrap ${t.role === 'clinician' ? 'bg-indigo-600 text-white' : 'bg-white border text-slate-800'}`}>
                             <div className="text-[10px] font-bold uppercase opacity-70 mb-1">{t.role === 'clinician' ? 'Siz (hekim)' : 'Danışan'}</div>
-                            {t.text}
+                            <Formatted text={t.text} />
                         </div>
                     </div>
                 ))}
@@ -165,7 +176,7 @@ export const RoleplayPanel: React.FC = () => {
             {feedback && (
                 <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
                     <h4 className="font-bold text-indigo-900 mb-2">Geri bildirim</h4>
-                    <div className="text-sm text-slate-800 whitespace-pre-wrap">{feedback}</div>
+                    <div className="text-sm text-slate-800 whitespace-pre-wrap"><Formatted text={feedback} /></div>
                 </div>
             )}
         </div>
