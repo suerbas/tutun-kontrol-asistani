@@ -4,6 +4,7 @@ import { ThoughtRecord, Patient } from '../types';
 import { Button } from './Button';
 import { patientService } from '../services/patientService';
 import { RoleplayPanel } from './bdt/RoleplayPanel';
+import { AI_ENABLED } from '../services/aiFlag';
 import { scrubText } from '../services/deidentify';
 
 interface CBTToolsProps {
@@ -82,7 +83,8 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
         { id: 'coping' as TabType, label: '🧘 Baş Etme', shortLabel: '🧘 Baş Etme', count: COPING_TECHNIQUES.length },
         { id: 'thought-record' as TabType, label: '✏️ Düşünce Kaydı', shortLabel: '✏️ Kayıt', count: null },
         { id: 'records' as TabType, label: '📋 Kayıtlar', shortLabel: '📋 Kayıtlar', count: existingRecords.length },
-        { id: 'roleplay' as TabType, label: '🎭 Rol Oyunu', shortLabel: '🎭 Rol Oyunu', count: null }
+        // Yapay zekâ geçici olarak kapalıysa rol oyunu sekmesi gösterilmez.
+        ...(AI_ENABLED ? [{ id: 'roleplay' as TabType, label: '🎭 Rol Oyunu', shortLabel: '🎭 Rol Oyunu', count: null }] : [])
     ];
 
     return (
@@ -489,7 +491,7 @@ export const CBTTools: React.FC<CBTToolsProps> = ({ patient, onClose, onUpdatePa
                     )}
 
                     {/* Rol Oyunu Tab */}
-                    {activeTab === 'roleplay' && <RoleplayPanel />}
+                    {AI_ENABLED && activeTab === 'roleplay' && <RoleplayPanel />}
 
                     {/* Kayıtlar Tab */}
                     {activeTab === 'records' && (

@@ -44,6 +44,8 @@ export const callOpenRouter = async (
     messages: ChatMessage[],
     opts: { maxTokens: number; temperature: number; title: string }
 ): Promise<ChatResult> => {
+    // Geçici kapatma: istek modele hiç gönderilmez, ücret oluşmaz.
+    if (process.env.AI_DISABLED === '1') return { ok: false, status: 503, error: 'Yapay zekâ özellikleri geçici olarak kapalı.' };
     const apiKey = process.env.OPENROUTER_API_KEY;
     const model = process.env.OPENROUTER_MODEL;
     if (!apiKey) return { ok: false, status: 500, error: 'Sunucuda OPENROUTER_API_KEY tanımlı değil.' };

@@ -8,6 +8,7 @@ import { PsychosocialModule } from './components/PsychosocialModule';
 import { AppScreen, Patient } from './types';
 import { Button } from './components/Button';
 import { SessionAssistant } from './components/assistant/SessionAssistant';
+import { AI_ENABLED } from './services/aiFlag';
 
 // Font size levels with numeric scale
 const FONT_SIZE_LEVELS = [0.8, 0.9, 1, 1.1, 1.25, 1.4, 1.6];
@@ -160,7 +161,7 @@ const App: React.FC = () => {
     const currentScale = FONT_SIZE_LEVELS[fontLevel];
     const scalePercent = Math.round(currentScale * 100);
 
-    const showAssistant = !!selectedPatient && (currentScreen === AppScreen.Intervention || currentScreen === AppScreen.Psychosocial);
+    const showAssistant = AI_ENABLED && !!selectedPatient && (currentScreen === AppScreen.Intervention || currentScreen === AppScreen.Psychosocial);
 
     return (
         // Asistan düğmesi sabit (fixed) durduğu için alta boşluk bırakılır; sayfanın son öğesi düğmenin üstüne kaydırılabilir.
